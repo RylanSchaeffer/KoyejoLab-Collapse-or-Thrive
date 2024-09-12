@@ -65,7 +65,7 @@ def create_dataset_for_supervised_finetuning(
     max_length: Optional[int] = None,
     remove_columns: bool = True,
 ) -> Dict[str, Union[Dataset]]:
-    if dataset_name == "nvidia/HelpSteer2":
+    if dataset_name == "nvidia/HelpSteer2" or "_hs2_" in dataset_name:
         raw_datasets = load_dataset(dataset_name)
         raw_datasets = raw_datasets.map(
             partial(preprocess_nvidia_helpsteer2_sft, tokenizer),
@@ -78,21 +78,19 @@ def create_dataset_for_supervised_finetuning(
                 lambda x: len(x["input_ids"]) <= max_length
             )
         if remove_columns:
-            raw_datasets = raw_datasets.remove_columns(
-                [
-                    "prompt",
-                    "response",
-                    "helpfulness",
-                    "correctness",
-                    "coherence",
-                    "complexity",
-                    "verbosity",
-                ]
-            )
+            columns_to_remove = [
+                col
+                for col in raw_datasets["train"].column_names
+                if col not in {"input_ids", "attention_mask"}
+            ]
+            raw_datasets = raw_datasets.remove_columns(columns_to_remove)
+
         datasets_dict = {
             "train": raw_datasets["train"],
-            "eval": raw_datasets["validation"],
         }
+        # Add validation if it exists.
+        if "validation" in raw_datasets:
+            datasets_dict["eval"] = raw_datasets["validation"]
     else:
         raise NotImplementedError(f"Unsupported dataset: {dataset_name}")
 

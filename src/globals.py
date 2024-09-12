@@ -2,8 +2,9 @@ DEFAULT_SUPERVISED_FINETUNING_CONFIG = {
     "data_config": {
         # "dataset": "Anthropic/hh-rlhf",
         # "dataset": "HuggingFaceH4/ultrafeedback_binarized",
-        "dataset": "nvidia/HelpSteer2",
+        # "dataset": "nvidia/HelpSteer2",
         # "dataset": "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsd0_iter1_temp1.0_max_seq_len512",
+        "dataset": "RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsd0_iter1_temp1.0_max_seq_len512",
         "shuffle_seed": 0,
     },
     "model_config": {
