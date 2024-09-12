@@ -38,7 +38,7 @@ parameters:
       eval_steps:
         values: [ 100 ]
       gradient_accumulation_steps:
-        values: [ 4 ]
+        values: [ 25 ]
       gradient_checkpointing:
         values: [ False ]
       learning_rate:
@@ -60,13 +60,13 @@ parameters:
       per_device_eval_batch_size:
         values: [ 32 ]
       per_device_train_batch_size:
-        values: [ 16 ]
+        values: [ 10 ]
       remove_unused_columns:
         values: [ True ]
       save_strategy:
-        values: [ "epoch" ]
+        values: [ "no" ]
       save_total_limit:
-        values: [ 1 ]
+        values: [ 0 ]
       report_to:
         values: [ wandb ]
       torch_compile:
