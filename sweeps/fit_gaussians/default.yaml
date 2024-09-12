@@ -1,4 +1,4 @@
-program: src/sample_language_model/sample_language_model.py
+program: src/fit_gaussians/fit_gaussians.py
 entity: rylan
 project: rerevisiting-model-collapse-fit-gaussians
 method: grid
