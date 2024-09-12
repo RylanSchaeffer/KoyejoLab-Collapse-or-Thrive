@@ -93,13 +93,7 @@ def sample_dataset_from_model(
                 continue  # Sometimes the model doesn't generate a response after "assistant: ".
             raw_prompt, raw_response = split_sample
             processed_prompt = raw_prompt.lstrip("user: ").strip()
-            try:
-                processed_response = raw_response.strip()
-            except ValueError:
-                print(f"Raw Prompt: {raw_prompt}")
-                print(f"Processed Prompt: {processed_prompt}")
-                print(f"Raw Response: {raw_response}")
-                raise ValueError
+            processed_response = raw_response.strip()
             dataset_prompts.append(processed_prompt)
             dataset_responses.append(processed_response)
 

@@ -33,11 +33,6 @@ def create_datasets_for_supervised_finetuning(
                 remove_columns=remove_columns,
             )
             for key, value in datasets_dict.items():
-                # We want to evaluate only on the real data. Thus, if key == "eval",
-                # only append if dataset_name is the "real" data "nvidia/HelpSteer2"
-                if key == "eval":
-                    if dataset_name != "nvidia/HelpSteer2":
-                        continue
                 combined_datasets_dict[key].append(value)
 
     # Combine the datasets.
@@ -45,6 +40,15 @@ def create_datasets_for_supervised_finetuning(
         combined_datasets_dict[key] = concatenate_datasets(
             dsets=combined_datasets_dict[key],
         )
+
+    # We always want to evaluate only on the real data. Thus, overwrite the eval dataset.
+    eval_dataset = create_dataset_for_supervised_finetuning(
+        tokenizer=tokenizer,
+        dataset_name="nvidia/HelpSteer2",
+        max_length=max_length,
+        remove_columns=remove_columns,
+    )["eval"]
+    combined_datasets_dict["eval"] = eval_dataset
 
     # Shuffle the datasets.
     for key in combined_datasets_dict.keys():
