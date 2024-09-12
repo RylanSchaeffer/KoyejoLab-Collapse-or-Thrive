@@ -186,6 +186,17 @@ def create_sft_model_huggingface_name(wandb_config: Dict[str, Any]) -> str:
         raise NotImplementedError
     reward_model_huggingface_name += f"_{simplified_dataset_name}"
     reward_model_huggingface_name += f"_sftsd{wandb_config['seed']}"
+
+    # If no trailing "iterN" is present, add it.
+    if "_iter" not in reward_model_huggingface_name:
+        reward_model_huggingface_name += "_iter1"
+    else:
+        # If "iterN" is present, increment N by 1.
+        reward_model_huggingface_name = reward_model_huggingface_name.replace(
+            "iter",
+            f"iter{int(reward_model_huggingface_name.split('iter')[-1]) + 1}",
+        )
+
     if len(reward_model_huggingface_name) > 94:
         raise ValueError(
             f"reward_model_huggingface_name is too long: {reward_model_huggingface_name}"

@@ -38,7 +38,7 @@ parameters:
       eval_steps:
         values: [ 5 ]
       gradient_accumulation_steps:
-        values: [ 10 ]
+        values: [ 16 ]
       gradient_checkpointing:
         values: [ False ]
       learning_rate:
@@ -58,9 +58,9 @@ parameters:
       optim:
         values: [ "adamw_torch" ]
       per_device_eval_batch_size:
-        values: [ 32 ]
+        values: [ 16 ]
       per_device_train_batch_size:
-        values: [ 10 ]
+        values: [ 8 ]
       remove_unused_columns:
         values: [ True ]
       save_strategy:
@@ -72,6 +72,6 @@ parameters:
       torch_compile:
         values: [ True ]
       warmup_ratio:
-        values: [ 0.025 ]
+        values: [ 0.05 ]
   seed:
-    values: [0]
+    values: [0, 1, 2]
