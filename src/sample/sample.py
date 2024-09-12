@@ -44,6 +44,7 @@ def sample_dataset_from_model(
     model = LLM(
         model_name_or_path,
         dtype="bfloat16",
+        enforce_eager=True,  # I don't trust Google models in FA2 and SDPA doesn't work with Gemma.
     )
     print("Loaded policy model.")
 
@@ -53,8 +54,11 @@ def sample_dataset_from_model(
     # Rejection sample till we get enough data.
     batch_generation_idx = 0
     while len(dataset_prompts) < total_num_samples:
-        print(f"Sampled {batch_generation_idx} / {total_num_samples}.")
-
+        # Note: Why do we use `n>1`?
+        # Answer 1: Legacy. Previously, I was passing in multiple different prompts and sampling outputs from
+        # each multiple times.
+        # Answer 2: I also suspect but have not verified that VLLM is friendlier to 64 prompts with
+        # 64 samples per prompt, rather than 4096 prompts and 1 sample per prompt.
         policy_model_sampling_params = SamplingParams(
             n=num_samples_per_sampling_call,
             max_tokens=max_seq_length,
@@ -75,22 +79,39 @@ def sample_dataset_from_model(
         ]
 
         for sample in batch_samples:
+            if not isinstance(sample, str):
+                print()
+
             # Only keep outputs that have both a user prompt and an assistant response.
             if not sample.startswith("user: "):
                 continue
-            if "assistant:" not in sample:
+            if "assistant: " not in sample:
                 continue
 
-            raw_prompt, raw_response = sample.split("assistant: ", maxsplit=1)
+            split_sample = sample.split("assistant: ")
+            if len(split_sample) != 2:
+                continue  # Sometimes the model doesn't generate a response after "assistant: ".
+            raw_prompt, raw_response = split_sample
             processed_prompt = raw_prompt.lstrip("user: ").strip()
-            processes_response = raw_response.strip()
+            try:
+                processed_response = raw_response.strip()
+            except ValueError:
+                print(f"Raw Prompt: {raw_prompt}")
+                print(f"Processed Prompt: {processed_prompt}")
+                print(f"Raw Response: {raw_response}")
+                raise ValueError
             dataset_prompts.append(processed_prompt)
-            dataset_responses.append(processes_response)
+            dataset_responses.append(processed_response)
 
         batch_generation_idx += 1
         print(f"Sampled {len(dataset_prompts)} / {total_num_samples}.")
 
     print("Sampled outputs from model.")
+
+    # We might have oversampled (depending on batch size). Trim back to get the
+    # correct number of samples.
+    dataset_prompts = dataset_prompts[:total_num_samples]
+    dataset_responses = dataset_responses[:total_num_samples]
 
     # Create the dataset.
     dataset = Dataset.from_dict(

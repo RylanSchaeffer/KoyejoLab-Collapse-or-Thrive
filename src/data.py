@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from accelerate import PartialState
 from datasets import (
     concatenate_datasets,
@@ -21,7 +23,7 @@ def create_datasets_for_supervised_finetuning(
     dataset_names: List[str] = data_config_dict["dataset"].split(",")
 
     # Load each dataset individually.
-    combined_datasets_dict = {}
+    combined_datasets_dict = defaultdict(list)
     for dataset_name in dataset_names:
         with PartialState().local_main_process_first():
             datasets_dict = create_dataset_for_supervised_finetuning(
@@ -31,29 +33,18 @@ def create_datasets_for_supervised_finetuning(
                 remove_columns=remove_columns,
             )
             for key, value in datasets_dict.items():
-                if key not in combined_datasets_dict:
-                    combined_datasets_dict[key] = [value]
-                else:
-                    combined_datasets_dict[key].append(value)
+                # We want to evaluate only on the real data. Thus, if key == "eval",
+                # only append if dataset_name is the "real" data "nvidia/HelpSteer2"
+                if key == "eval":
+                    if dataset_name != "nvidia/HelpSteer2":
+                        continue
+                combined_datasets_dict[key].append(value)
 
-    # Join the datasets using interleave, using the probabilities if provided.
-    if "probabilities" not in data_config_dict:
-        probabilities = None
-    else:
-        probabilities = data_config_dict["probabilities"]
+    # Combine the datasets.
     for key in combined_datasets_dict.keys():
-        try:
-            # Currently, interleave datasets doesn't work with torch Subsets.
-            combined_datasets_dict[key] = interleave_datasets(
-                datasets=combined_datasets_dict[key],
-                probabilities=probabilities,
-            )
-        # TODO: Find a non-hacky workaround later.
-        # ValueError: Expected a list of Dataset objects or a list of IterableDataset
-        # objects, but element at position 0 is a Subset.
-        except ValueError:
-            assert len(combined_datasets_dict[key]) == 1
-            combined_datasets_dict[key] = combined_datasets_dict[key][0]
+        combined_datasets_dict[key] = concatenate_datasets(
+            dsets=combined_datasets_dict[key],
+        )
 
     # Shuffle the datasets.
     for key in combined_datasets_dict.keys():
