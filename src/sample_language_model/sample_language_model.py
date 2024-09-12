@@ -68,14 +68,14 @@ def sample_dataset_from_model():
     dataset_prompts = []
     dataset_responses = []
 
-    # Rejection sample till we get enough data.
+    # Rejection sample_language_model till we get enough data.
     batch_generation_idx = 0
     while len(dataset_prompts) < wandb_config["total_num_samples"]:
         # Note: Why do we use `n>1`?
         # Answer 1: Legacy. Previously, I was passing in multiple different prompts and sampling outputs from
         # each multiple times.
         # Answer 2: I also suspect but have not verified that VLLM is friendlier to 64 prompts with
-        # 64 samples per prompt, rather than 4096 prompts and 1 sample per prompt.
+        # 64 samples per prompt, rather than 4096 prompts and 1 sample_language_model per prompt.
         policy_model_sampling_params = SamplingParams(
             n=wandb_config["num_samples_per_prompt"],
             max_tokens=wandb_config["max_seq_length"],

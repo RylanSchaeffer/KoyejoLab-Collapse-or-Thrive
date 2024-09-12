@@ -1,3 +1,12 @@
+DEFAULT_GAUSSIAN_FITTING_CONFIG = {
+    "feature_dim": 7,
+    "num_samples_per_iteration": 89,
+    "num_iterations": 100,
+    "seed": 0,
+    "sigma_squared": 1.0,
+}
+
+
 DEFAULT_SAMPLE_CONFIG = {
     "max_seq_length": 512,
     "model_name_or_path": "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd2",

@@ -38,7 +38,7 @@ def train_supervised_finetuning():
     num_visible_devices = torch.cuda.device_count()
     assert num_visible_devices > 0, "No CUDA devices available."
     run = wandb.init(
-        project="rerevisiting-model-collapse-sft",
+        project="rerevisiting-model-collapse-sft_language_model",
         config=src.globals.DEFAULT_SUPERVISED_FINETUNING_CONFIG,
         entity=wandb.api.default_entity,
     )
@@ -62,7 +62,9 @@ def train_supervised_finetuning():
         "final_model_name_or_path"
     ]
     print("Reward Model HuggingFace Name: ", sft_model_huggingface_name)
-    output_dir = os.path.join("models", "sft", sft_model_huggingface_name)
+    output_dir = os.path.join(
+        "models", "sft_language_model", sft_model_huggingface_name
+    )
     print("Output Directory: ", output_dir)
     os.makedirs(output_dir, exist_ok=True)
 
