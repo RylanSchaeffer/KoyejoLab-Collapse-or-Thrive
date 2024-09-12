@@ -36,21 +36,21 @@ parameters:
       eval_strategy:
         values: [ steps ]
       eval_steps:
-        values: [ 100 ]
+        values: [ 5 ]
       gradient_accumulation_steps:
-        values: [ 25 ]
+        values: [ 10 ]
       gradient_checkpointing:
         values: [ False ]
       learning_rate:
         values: [ 8e-6 ]
       logging_steps:
-        values: [ 5 ]
+        values: [ 1 ]
       lr_scheduler_type:
-        values: [ "linear" ]
+        values: [ "constant_with_warmup" ]
       max_grad_norm:
         values: [ 1.0 ]
       max_seq_length:
-        values: [ 1024 ]
+        values: [ 512 ]
       max_steps:
         values: [ -1 ]
       num_train_epochs:

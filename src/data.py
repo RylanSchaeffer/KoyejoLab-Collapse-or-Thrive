@@ -74,6 +74,7 @@ def create_dataset_for_supervised_finetuning(
         raw_datasets = load_dataset(dataset_name)
         raw_datasets = raw_datasets.map(
             partial(preprocess_nvidia_helpsteer2_sft, tokenizer),
+            load_from_cache_file=False,  # Always make sure we're using the latest version.
             batched=True,
             num_proc=4,
         )
@@ -113,6 +114,10 @@ def preprocess_nvidia_helpsteer2_sft(
     for prompt, response in zip(examples["prompt"], examples["response"]):
         input_str = f"user: {prompt}\nassistant: {response}"
         tokenized_input = tokenizer(input_str)
+        # Make certain we end on EOS. See: https://arxiv.org/abs/2403.17031
+        if tokenized_input["input_ids"][-1] != tokenizer.eos_token_id:
+            tokenized_input["input_ids"].append(tokenizer.eos_token_id)
+            tokenized_input["attention_mask"].append(1)
         new_examples["input_ids"].append(tokenized_input["input_ids"])
         new_examples["attention_mask"].append(tokenized_input["attention_mask"])
 
