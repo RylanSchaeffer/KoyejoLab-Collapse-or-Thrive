@@ -60,7 +60,7 @@ def sample_dataset_from_model(
             max_tokens=max_seq_length,
             ignore_eos=False,
             seed=batch_generation_idx,
-            stop_token_ids=model.get_tokenizer().eos_token_id,
+            stop_token_ids=[model.get_tokenizer().eos_token_id],
             temperature=temperature,
         )
 
@@ -82,9 +82,10 @@ def sample_dataset_from_model(
                 continue
 
             raw_prompt, raw_response = sample.split("assistant: ", maxsplit=1)
-            assert raw_prompt.startswith("user: ")
-            dataset_prompts.append(raw_prompt.lstrip("user: ").strip())
-            dataset_responses.append(raw_response.strip())
+            processed_prompt = raw_prompt.lstrip("user: ").strip()
+            processes_response = raw_response.strip()
+            dataset_prompts.append(processed_prompt)
+            dataset_responses.append(processes_response)
 
         batch_generation_idx += 1
 
@@ -125,9 +126,10 @@ if __name__ == "__main__":
     sample_dataset_from_model(
         model_name_or_path="RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsd0_iter1",
         # max_seq_length=128,
-        max_seq_length=256,
-        # max_seq_length=512,
-        total_num_samples=10,
+        # max_seq_length=256,
+        max_seq_length=512,
+        # total_num_samples=10,
+        total_num_samples=64,
         # total_num_samples=100,
     )
     print("Finished sample_outputs_from_policy_model.py!")
