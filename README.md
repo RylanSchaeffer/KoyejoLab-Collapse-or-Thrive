@@ -40,7 +40,25 @@ python -u src/sample/sample.py
 
 Both load the default hyperparameters from `src/globals.py` and log data to W&B.
 The default hyperparameters can be overwritten by W&B sweeps in the directory `sweeps/`.
+To run training+evaluation using a W&B sweep, use the following command:
 
+```
+export CUDA_VISIBLE_DEVICES=0
+export PYTHONPATH=.
+# This will return the sweep ID.
+wandb sweep <path to the sweep's YML file, e.g., sweeps/sft/helpsteer2_sweep=gemma_2_2b_data=original_iter1.yaml>
+wandb agent rylan/rerevisiting-model-collapse-sft/<sweep ID>
+```
+
+To run sampling using a W&B sweep, use the following command:
+
+```
+export CUDA_VISIBLE_DEVICES=0
+export PYTHONPATH=.
+# This will return the sweep ID.
+wandb sweep <path to the sweep's YML file, e.g., sweeps/sample/helpsteer2_sweep=gemma_2_2b_data=original_iter1.yaml>
+wandb agent rylan/rerevisiting-model-collapse-sample/<sweep ID>
+```
 
 ## Contributing
 

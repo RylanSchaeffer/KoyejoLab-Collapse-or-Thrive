@@ -1,6 +1,6 @@
 program: src/sft/train_sft.py
 entity: rylan
-project: rerevisiting-model-collapse
+project: rerevisiting-model-collapse-sft
 method: grid
 parameters:
   data_config:

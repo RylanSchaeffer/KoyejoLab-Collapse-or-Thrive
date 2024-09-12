@@ -38,7 +38,7 @@ def train_supervised_finetuning():
     num_visible_devices = torch.cuda.device_count()
     assert num_visible_devices > 0, "No CUDA devices available."
     run = wandb.init(
-        project="rerevisiting-model-collapse",
+        project="rerevisiting-model-collapse-sft",
         config=src.globals.DEFAULT_SUPERVISED_FINETUNING_CONFIG,
         entity=wandb.api.default_entity,
     )
