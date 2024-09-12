@@ -1,6 +1,6 @@
 DEFAULT_SAMPLE_CONFIG = {
-    "model_name_or_path": "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd2",
     "max_seq_length": 512,
+    "model_name_or_path": "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd2",
     "num_prompts_per_sampling_call": 64,
     "num_samples_per_prompt": 64,
     "temperature": 1.0,
