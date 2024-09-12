@@ -76,7 +76,7 @@ def train_supervised_finetuning():
     model_config_dict: Dict[str, Any] = wandb_config["model_config"]
     data_config_dict: Dict[str, Any] = wandb_config["data_config"]
 
-    # Lightly modify configs as necessary to function with RewardConfig.
+    # Lightly modify configs as necessary.
     if model_config_dict["torch_dtype"] == "bfloat16":
         sft_trainer_config_dict["bf16"] = True
     else:
@@ -85,6 +85,10 @@ def train_supervised_finetuning():
         sft_trainer_config_dict["fp16"] = True
     else:
         sft_trainer_config_dict["fp16"] = False
+    if sft_trainer_config_dict["gradient_checkpointing"]:
+        model_config_dict["use_cache"] = False
+    else:
+        model_config_dict["use_cache"] = True
 
     sft_config = SFTConfig(
         bf16=sft_trainer_config_dict["bf16"],
@@ -160,7 +164,7 @@ def train_supervised_finetuning():
     pprint.pprint(metrics)
 
     print(f"Pushing to HuggingFace...")
-    trainer.push_to_hub(private=True)
+    trainer.push_to_hub()
     # trainer.save_model(output_dir=sft_config.output_dir)
     print("Pushed to disk.")
     wandb.finish()
@@ -176,7 +180,7 @@ def create_sft_model_huggingface_name(wandb_config: Dict[str, Any]) -> str:
     reward_model_huggingface_name = f"collapse_{simplified_base_lm_name}"
     dataset_name = wandb_config["data_config"]["dataset"]
     if dataset_name == "nvidia/HelpSteer2":
-        simplified_dataset_name = "HelpSteer2"
+        simplified_dataset_name = "hs2"
     else:
         raise NotImplementedError
     reward_model_huggingface_name += f"_{simplified_dataset_name}"

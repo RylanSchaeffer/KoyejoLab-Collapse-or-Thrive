@@ -42,14 +42,18 @@ def create_model_automodelforcausallm(
         assert model_config_dict["attn_implementation"] == "eager"
 
     model_kwargs = {
-        "trust_remote_code": True,
+        "attn_implementation": "eager",
         "device_map": "auto",
         "torch_dtype": torch_dtype,
+        "trust_remote_code": True,
     }
     model_kwargs.update(model_config_dict)
+    # TypeError: Gemma2ForCausalLM.__init__() got an unexpected keyword argument 'model_name_or_path'
+    model_kwargs.pop("model_name_or_path")
 
     model = AutoModelForCausalLM.from_pretrained(
         model_config_dict["model_name_or_path"],
+        **model_kwargs,
     )
 
     return model
