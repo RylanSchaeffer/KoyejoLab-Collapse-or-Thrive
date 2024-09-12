@@ -1,5 +1,5 @@
 DEFAULT_GAUSSIAN_FITTING_CONFIG = {
-    "feature_dim": 7,
+    "datum_dim": 7,
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
