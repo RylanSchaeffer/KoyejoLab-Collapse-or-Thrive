@@ -1,0 +1,27 @@
+name: model_collapse_20240911
+channels:
+  - pytorch
+  - nvidia
+  - huggingface
+  - conda-forge
+dependencies:
+  - python=3.11
+  - black
+  - datasets==2.20.0
+  - matplotlib
+  - numpy
+  - pandas
+  - pyarrow
+  - scipy
+  - seaborn
+  - tokenizers==0.19.1
+  - tqdm
+  - transformers==4.44.0
+  - pip:
+      - huggingface_hub
+      - joblib
+      - nvidia-htop
+      - scikit-learn
+      - trl==0.10.1
+      - vllm==0.5.4
+      - wandb
