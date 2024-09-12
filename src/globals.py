@@ -1,3 +1,13 @@
+DEFAULT_SAMPLE_CONFIG = {
+    "model_name_or_path": "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd2",
+    "max_seq_length": 512,
+    "num_prompts_per_sampling_call": 64,
+    "num_samples_per_prompt": 64,
+    "temperature": 1.0,
+    "total_num_samples": 20324,  # The number of samples in the HelpSteer2 dataset.
+}
+
+
 DEFAULT_SUPERVISED_FINETUNING_CONFIG = {
     "data_config": {
         # "dataset": "Anthropic/hh-rlhf",

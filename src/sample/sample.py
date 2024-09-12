@@ -17,32 +17,49 @@ from datasets import Dataset, DatasetDict, load_dataset
 import gc
 import numpy as np
 import pandas as pd
+import pprint
 import time
 import torch
 from typing import Any, Dict, List
 from vllm import LLM, SamplingParams, RequestOutput
 from vllm.distributed.parallel_state import destroy_model_parallel
+import wandb
+
 
 import src.data
+import src.globals
 
 
-def sample_dataset_from_model(
-    model_name_or_path: str = "RylanSchaeffer/EleutherAI_pythia-2.8b_tatsu-lab_alpaca_farm_sftseed0",
-    temperature: float = 1.0,
-    total_num_samples: int = 100,
-    max_seq_length: int = 512,
-    num_samples_per_sampling_call: int = 64,
-):
+def sample_dataset_from_model():
+    num_visible_devices = torch.cuda.device_count()
+    assert num_visible_devices > 0, "No CUDA devices available."
+    run = wandb.init(
+        project="rerevisiting-model-collapse-sampling",
+        config=src.globals.DEFAULT_SAMPLE_CONFIG,
+        entity=wandb.api.default_entity,
+    )
+
+    # Convert to a dictionary; otherwise, can't distribute because W&B
+    # config is not pickle-able.
+    wandb_config: Dict[str, Any] = dict(wandb.config)
+    print("CUDA VISIBLE DEVICES: ", os.environ["CUDA_VISIBLE_DEVICES"])
+    pprint.pprint(wandb_config)
+
     # Create dataset name.
+    model_name_or_path = wandb_config["model_name_or_path"]
+    temperature = wandb_config["temperature"]
+    max_seq_length = wandb_config["max_seq_length"]
     dataset_name = f"{model_name_or_path.split('/')[1]}_temp{temperature}_max_seq_len{max_seq_length}"
     print(f"Dataset name: {dataset_name}")
 
     # Create empty prompts for sampling.
-    sampling_prompts = ["" for _ in range(num_samples_per_sampling_call)]
+    sampling_prompts = [
+        "" for _ in range(wandb_config["num_prompts_per_sampling_call"])
+    ]
 
     # Load the model.
     model = LLM(
-        model_name_or_path,
+        wandb_config["model_name_or_path"],
         dtype="bfloat16",
         enforce_eager=True,  # I don't trust Google models in FA2 and SDPA doesn't work with Gemma.
     )
@@ -53,19 +70,19 @@ def sample_dataset_from_model(
 
     # Rejection sample till we get enough data.
     batch_generation_idx = 0
-    while len(dataset_prompts) < total_num_samples:
+    while len(dataset_prompts) < wandb_config["total_num_samples"]:
         # Note: Why do we use `n>1`?
         # Answer 1: Legacy. Previously, I was passing in multiple different prompts and sampling outputs from
         # each multiple times.
         # Answer 2: I also suspect but have not verified that VLLM is friendlier to 64 prompts with
         # 64 samples per prompt, rather than 4096 prompts and 1 sample per prompt.
         policy_model_sampling_params = SamplingParams(
-            n=num_samples_per_sampling_call,
-            max_tokens=max_seq_length,
+            n=wandb_config["num_samples_per_prompt"],
+            max_tokens=wandb_config["max_seq_length"],
             ignore_eos=False,
             seed=batch_generation_idx,
             stop_token_ids=[model.get_tokenizer().eos_token_id],
-            temperature=temperature,
+            temperature=wandb_config["temperature"],
         )
 
         requests_outputs: List[RequestOutput] = model.generate(
@@ -80,7 +97,7 @@ def sample_dataset_from_model(
 
         for sample in batch_samples:
             if not isinstance(sample, str):
-                print()
+                print()  # Debugging.
 
             # Only keep outputs that have both a user prompt and an assistant response.
             if not sample.startswith("user: "):
@@ -98,14 +115,14 @@ def sample_dataset_from_model(
             dataset_responses.append(processed_response)
 
         batch_generation_idx += 1
-        print(f"Sampled {len(dataset_prompts)} / {total_num_samples}.")
+        print(f"Sampled {len(dataset_prompts)} / {wandb_config['total_num_samples']}.")
 
     print("Sampled outputs from model.")
 
     # We might have oversampled (depending on batch size). Trim back to get the
     # correct number of samples.
-    dataset_prompts = dataset_prompts[:total_num_samples]
-    dataset_responses = dataset_responses[:total_num_samples]
+    dataset_prompts = dataset_prompts[: wandb_config["total_num_samples"]]
+    dataset_responses = dataset_responses[: wandb_config["total_num_samples"]]
 
     # Create the dataset.
     dataset = Dataset.from_dict(
@@ -141,15 +158,6 @@ if __name__ == "__main__":
         )
 
     # dataset = load_dataset("nvidia/HelpSteer2")
-    sample_dataset_from_model(
-        model_name_or_path="RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd2",
-        # max_seq_length=128,
-        # max_seq_length=256,
-        max_seq_length=512,
-        # total_num_samples=10,
-        # total_num_samples=64,
-        # total_num_samples=100,
-        total_num_samples=20324,  # The number of samples in the HelpSteer2 dataset.
-    )
+    sample_dataset_from_model()
 
     print("Finished sample_outputs_from_policy_model.py!")
