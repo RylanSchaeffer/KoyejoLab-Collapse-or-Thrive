@@ -35,7 +35,7 @@ def create_model_automodelforcausallm(
     else:
         raise NotImplementedError
 
-    if "gemma" in model_config_dict["model_name_or_path"]:
+    if "gemma" in model_config_dict["initial_model_name_or_path"]:
         # Don't use Google models with anything other than bfloat16.
         assert torch_dtype == torch.bfloat16
         # Also use eager with Gemma.
@@ -47,12 +47,15 @@ def create_model_automodelforcausallm(
         "torch_dtype": torch_dtype,
         "trust_remote_code": True,
     }
+    # Add the model config to the model kwargs.
     model_kwargs.update(model_config_dict)
+    # Remove the unwanted keys.
     # TypeError: Gemma2ForCausalLM.__init__() got an unexpected keyword argument 'model_name_or_path'
-    model_kwargs.pop("model_name_or_path")
+    model_kwargs.pop("initial_model_name_or_path")
+    model_kwargs.pop("final_model_name_or_path")
 
     model = AutoModelForCausalLM.from_pretrained(
-        model_config_dict["model_name_or_path"],
+        model_config_dict["initial_model_name_or_path"],
         **model_kwargs,
     )
 

@@ -49,10 +49,18 @@ def train_supervised_finetuning():
     print("CUDA VISIBLE DEVICES: ", os.environ["CUDA_VISIBLE_DEVICES"])
     pprint.pprint(wandb_config)
 
+    # Replace XXX with the seed in two key hyperparameters.
+    wandb_config["data_config"]["dataset"] = wandb_config["data_config"][
+        "dataset"
+    ].replace("XXX", str(wandb_config["seed"]))
+    wandb_config["model_config"]["final_model_name_or_path"] = wandb_config[
+        "model_config"
+    ]["final_model_name_or_path"].replace("XXX", str(wandb_config["seed"]))
+
     # Create output directory.
-    sft_model_huggingface_name = create_sft_model_huggingface_name(
-        wandb_config=wandb_config
-    )
+    sft_model_huggingface_name = wandb_config["model_config"][
+        "final_model_name_or_path"
+    ]
     print("Reward Model HuggingFace Name: ", sft_model_huggingface_name)
     output_dir = os.path.join("models", "sft", sft_model_huggingface_name)
     print("Output Directory: ", output_dir)
@@ -131,7 +139,9 @@ def train_supervised_finetuning():
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
-        model_config_dict["model_name_or_path"], use_fast=True, trust_remote_code=True
+        model_config_dict["initial_model_name_or_path"],
+        use_fast=True,
+        trust_remote_code=True,
     )
 
     # trl/trainer/sft_trainer.py:408: UserWarning: You passed a tokenizer with padding_side not equal
@@ -172,30 +182,11 @@ def train_supervised_finetuning():
 
 
 def create_sft_model_huggingface_name(wandb_config: Dict[str, Any]) -> str:
-    simplified_base_lm_name = (
-        wandb_config["model_config"]["model_name_or_path"]
-        .replace("RylanSchaeffer/", "")
-        .replace("google/", "")
-        .replace("/", "_")
-    )
-    reward_model_huggingface_name = f"collapse_{simplified_base_lm_name}"
-    dataset_name = wandb_config["data_config"]["dataset"]
-    if dataset_name == "nvidia/HelpSteer2":
-        simplified_dataset_name = "hs2"
-    else:
-        raise NotImplementedError
-    reward_model_huggingface_name += f"_{simplified_dataset_name}"
-    reward_model_huggingface_name += f"_sftsd{wandb_config['seed']}"
-
-    # If no trailing "iterN" is present, add it.
-    if "_iter" not in reward_model_huggingface_name:
-        reward_model_huggingface_name += "_iter1"
-    else:
-        # If "iterN" is present, increment N by 1.
-        reward_model_huggingface_name = reward_model_huggingface_name.replace(
-            "iter",
-            f"iter{int(reward_model_huggingface_name.split('iter')[-1]) + 1}",
-        )
+    reward_model_huggingface_name = wandb_config["model_config"][
+        "final_model_name_or_path"
+    ]
+    if "sftsd" not in reward_model_huggingface_name:
+        reward_model_huggingface_name += f"_sftsd{wandb_config['seed']}"
 
     if len(reward_model_huggingface_name) > 94:
         raise ValueError(

@@ -6,7 +6,7 @@ parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "nvidia/HelpSteer2" ]
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX_temp1.0_max_seq_len512" ]
       fraction:
         values: [ 1.0 ]
       shuffle_seed:
@@ -17,7 +17,9 @@ parameters:
         values: [ "eager" ]
       device_map:
         values: [ "auto" ]
-      model_name_or_path:
+      final_model_name_or_path:
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter2_sftsdXXX" ]
+      initial_model_name_or_path:
         values: [ "google/gemma-2-2b" ]
       torch_dtype:
         values: [ "bfloat16" ]

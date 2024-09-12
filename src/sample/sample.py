@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     # dataset = load_dataset("nvidia/HelpSteer2")
     sample_dataset_from_model(
-        model_name_or_path="RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsd0_iter1",
+        model_name_or_path="RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd1",
         # max_seq_length=128,
         # max_seq_length=256,
         max_seq_length=512,
