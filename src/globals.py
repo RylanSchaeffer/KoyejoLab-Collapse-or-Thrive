@@ -1,8 +1,9 @@
 DEFAULT_GAUSSIAN_FITTING_CONFIG = {
-    "datum_dim": 7,
+    "data_dim": 7,
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
+    "setting": "Accumulate",
     "sigma_squared": 1.0,
 }
 
