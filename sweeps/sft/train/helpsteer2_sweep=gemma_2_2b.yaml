@@ -40,7 +40,7 @@ parameters:
       learning_rate:
         values: [ 8e-6 ]
       logging_steps:
-        values: [ 10 ]
+        values: [ 5 ]
       lr_scheduler_type:
         values: [ "linear" ]
       max_grad_norm:
@@ -66,6 +66,6 @@ parameters:
       torch_compile:
         values: [ False ]
       warmup_ratio:
-        values: [ 0.1 ]
+        values: [ 0.025 ]
   seed:
-    values: [0, 1, 2]
+    values: [0]

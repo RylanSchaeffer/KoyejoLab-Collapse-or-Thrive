@@ -38,6 +38,8 @@ def create_model_automodelforcausallm(
     if "gemma" in model_config_dict["model_name_or_path"]:
         # Don't use Google models with anything other than bfloat16.
         assert torch_dtype == torch.bfloat16
+        # Also use eager with Gemma.
+        assert model_config_dict["attn_implementation"] == "eager"
 
     model_kwargs = {
         "trust_remote_code": True,

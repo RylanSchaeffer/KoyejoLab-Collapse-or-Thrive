@@ -5,8 +5,8 @@ DEFAULT_SUPERVISED_FINETUNING_CONFIG = {
         "dataset": "nvidia/HelpSteer2",
     },
     "model_config": {
-        # "attn_implementation": "eager",
-        "attn_implementation": "flash_attention_2",
+        "attn_implementation": "eager",
+        # "attn_implementation": "flash_attention_2",
         # "model_name_or_path": "facebook/opt-350m",
         "model_name_or_path": "google/gemma-2-2b",
         # "model_name_or_path": "google/gemma-2-9b",

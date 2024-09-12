@@ -38,9 +38,9 @@ def train_supervised_finetuning():
     num_visible_devices = torch.cuda.device_count()
     assert num_visible_devices > 0, "No CUDA devices available."
     run = wandb.init(
-        project="switching-rms-sft",
+        project="rerevisiting-model-collapse",
         config=src.globals.DEFAULT_SUPERVISED_FINETUNING_CONFIG,
-        entity="rylan",
+        entity=wandb.api.default_entity,
     )
 
     # Convert to a dictionary; otherwise, can't distribute because W&B
@@ -159,13 +159,10 @@ def train_supervised_finetuning():
     trainer.log_metrics(split="eval", metrics=metrics)
     pprint.pprint(metrics)
 
-    print(f"Pushing to HuggingFace")
-    # Copied from https://huggingface.co/docs/transformers/main/en/fsdp
-    if trainer.is_fsdp_enabled:
-        trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
-    trainer.push_to_hub()
+    print(f"Pushing to HuggingFace...")
+    trainer.push_to_hub(private=True)
     # trainer.save_model(output_dir=sft_config.output_dir)
-    print("Saved last checkpoint to disk.")
+    print("Pushed to disk.")
     wandb.finish()
 
 
