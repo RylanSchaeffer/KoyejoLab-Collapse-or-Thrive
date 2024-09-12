@@ -7,6 +7,10 @@ parameters:
     parameters:
       dataset:
         values: [ "nvidia/HelpSteer2" ]
+      fraction:
+        values: [ 1.0 ]
+      shuffle_seed:
+        values: [0]
   model_config:
     parameters:
       attn_implementation:
@@ -36,7 +40,7 @@ parameters:
       gradient_accumulation_steps:
         values: [ 4 ]
       gradient_checkpointing:
-        values: [ True ]
+        values: [ False ]
       learning_rate:
         values: [ 8e-6 ]
       logging_steps:

@@ -55,6 +55,12 @@ def create_datasets_for_supervised_finetuning(
             assert len(combined_datasets_dict[key]) == 1
             combined_datasets_dict[key] = combined_datasets_dict[key][0]
 
+    # Shuffle the datasets.
+    for key in combined_datasets_dict.keys():
+        combined_datasets_dict[key] = combined_datasets_dict[key].shuffle(
+            seed=data_config_dict["shuffle_seed"]
+        )
+
     return combined_datasets_dict
 
 
