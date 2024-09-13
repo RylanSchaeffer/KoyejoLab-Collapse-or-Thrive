@@ -67,8 +67,7 @@ def fit_gaussians():
             {
                 "Data Dimension": data_dim,
                 "Num. Samples per Iteration": num_samples_per_iteration,
-                r"Initial Noise": sigma_squared,  # "sigma_squared" is the noise variance for the true data.
-                "repeat": wandb_config["seed"],
+                "Initial Noise": sigma_squared,  # "sigma_squared" is the noise variance for the true data.
                 "Model-Fitting Iteration": iteration_idx,
                 "Setting": setting,
                 "Squared Error of Fit Mean (Numerical)": squared_error_of_fit_mean_from_init_mean,
