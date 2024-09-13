@@ -27,7 +27,7 @@ For developing or manually running training+evaluation, from the project directo
 ```
 export CUDA_VISIBLE_DEVICES=0
 export PYTHONPATH=.
-python -u src/sft_language_model/train_sft.py
+python -u src/sft_language_model/sft_language_model.py
 ```
 
 For developing or manually running sampling, from the project directory, run:
@@ -35,7 +35,7 @@ For developing or manually running sampling, from the project directory, run:
 ```
 export CUDA_VISIBLE_DEVICES=0
 export PYTHONPATH=.
-python -u src/sample_language_model/sample.py
+python -u src/sample_language_model/sample_language_model.py
 ```
 
 Both load the default hyperparameters from `src/globals.py` and log data to W&B.
