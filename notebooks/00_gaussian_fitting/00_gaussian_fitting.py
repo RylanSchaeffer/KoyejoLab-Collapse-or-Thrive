@@ -12,8 +12,8 @@ import src.analyze
 import src.plot
 
 
-refresh = False
-# refresh = True
+# refresh = False
+refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -22,7 +22,7 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 sweep_ids = [
-    "rzxsbi6y",  # Massive Gaussian fitting experiment.
+    "k3mipjqi",  # Gaussian fitting experiment (~5k runs).
 ]
 
 run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
@@ -33,15 +33,6 @@ run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histori
     wandb_username=wandb.api.default_entity,
 )
 
-# Fix the stupidly named column.
-run_histories_df.rename(
-    columns={
-        "Num. Samples per Iteration (num_samples_per_iteration)": "Num. Samples per Iteration (T)",
-    },
-    inplace=True,
-)
-
-
 # Plot the covariances over time as Gaussian PDFs.
 # Define the range for the x-axis (support)
 x = np.linspace(-4, 4, 1000)
@@ -50,7 +41,7 @@ model_fitting_iteration_indices = sorted(
 )
 cmap = matplotlib.cm.get_cmap("Spectral_r", len(model_fitting_iteration_indices))
 
-for num_samples_per_iter in run_histories_df["Num. Samples per Iteration (T)"].unique():
+for num_samples_per_iter in run_histories_df["Num. Samples per Iteration"].unique():
     plt.close()
     fig, axes = plt.subplots(
         figsize=(12, 4),
@@ -67,10 +58,10 @@ for num_samples_per_iter in run_histories_df["Num. Samples per Iteration (T)"].u
             iteration_group = iteration_group[
                 (iteration_group["Setting"] == setting)
                 & (
-                    iteration_group["Num. Samples per Iteration (T)"]
+                    iteration_group["Num. Samples per Iteration"]
                     == num_samples_per_iter
                 )
-                & (iteration_group["Data Dimension (d)"] == 1)
+                & (iteration_group["Data Dimension"] == 1)
             ]
             cov = iteration_group["Fit Covariance (Numerical)"].mean()
             y = scipy.stats.norm.pdf(x, 0, cov)
@@ -94,7 +85,7 @@ for num_samples_per_iter in run_histories_df["Num. Samples per Iteration (T)"].u
     # Need to do this manually because of the tight layout.
     for extension in {"png", "pdf"}:
         plt.savefig(
-            f"figures/fit_covariance_pdf_by_model_fitting_iteration_samples={int(num_samples_per_iter)}.{extension}",
+            f"{results_dir}/fit_covariance_pdf_by_model_fitting_iteration_samples={int(num_samples_per_iter)}.{extension}",
             bbox_inches="tight",
             dpi=300,
         )
@@ -102,10 +93,10 @@ for num_samples_per_iter in run_histories_df["Num. Samples per Iteration (T)"].u
 
 plt.close()
 g = sns.relplot(
-    data=run_histories_df[run_histories_df["Data Dimension (d)"] == 10],
+    data=run_histories_df[run_histories_df["Data Dimension"] == 10],
     x="Model-Fitting Iteration",
     y="Squared Error of Fit Mean (Numerical)",
-    hue="Num. Samples per Iteration (T)",
+    hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
     col="Setting",
     col_order=["Replace", "Accumulate"],
@@ -130,10 +121,10 @@ src.plot.save_plot_with_multiple_extensions(
 
 plt.close()
 g = sns.relplot(
-    data=run_histories_df[run_histories_df["Data Dimension (d)"] == 10],
+    data=run_histories_df[run_histories_df["Data Dimension"] == 10],
     x="Model-Fitting Iteration",
     y="Det of Fit Cov / Det of Init Cov (Numerical)",
-    hue="Num. Samples per Iteration (T)",
+    hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
     col="Setting",
     col_order=["Replace", "Accumulate"],
@@ -155,10 +146,10 @@ src.plot.save_plot_with_multiple_extensions(
 
 plt.close()
 g = sns.relplot(
-    data=run_histories_df[run_histories_df["Data Dimension (d)"] == 10],
+    data=run_histories_df[run_histories_df["Data Dimension"] == 10],
     x="Model-Fitting Iteration",
     y="Trace of Fit Cov / Trace of Init Cov (Numerical)",
-    hue="Num. Samples per Iteration (T)",
+    hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
     col="Setting",
     col_order=["Replace", "Accumulate"],
