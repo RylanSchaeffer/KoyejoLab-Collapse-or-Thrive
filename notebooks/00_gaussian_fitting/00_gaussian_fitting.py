@@ -12,8 +12,8 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
-refresh = True
+refresh = False
+# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -114,7 +114,7 @@ g.set_titles(
 )
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
-    plot_dir="figures",
+    plot_dir=results_dir,
     plot_filename="squared_error_of_fit_mean_vs_model_fitting_iteration_by_noise_col=setting",
 )
 # plt.show()
@@ -139,7 +139,7 @@ g.set_titles(
 )
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
-    plot_dir="figures",
+    plot_dir=results_dir,
     plot_filename="determinant_of_fit_cov_vs_model_fitting_iteration_by_noise_col=setting",
 )
 # plt.show()
@@ -164,7 +164,7 @@ g.set_titles(
 )
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
-    plot_dir="figures",
+    plot_dir=results_dir,
     plot_filename="trace_of_fit_cov_vs_model_fitting_iteration_by_noise_col=setting",
 )
 # plt.show()
