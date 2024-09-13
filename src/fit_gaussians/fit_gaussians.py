@@ -65,10 +65,9 @@ def fit_gaussians():
 
         wandb.log(
             {
-                "Data Dimension (d)": data_dim,
-                "Num. Samples per Iteration (num_samples_per_iteration)": num_samples_per_iteration,
-                r"Initial Noise ($\sigma^2$)": sigma_squared,  # "sigma_squared" is the noise variance for the true data.
-                "repeat": wandb_config["seed"],
+                "Data Dimension": data_dim,
+                "Num. Samples per Iteration": num_samples_per_iteration,
+                "Initial Noise": sigma_squared,  # "sigma_squared" is the noise variance for the true data.
                 "Model-Fitting Iteration": iteration_idx,
                 "Setting": setting,
                 "Squared Error of Fit Mean (Numerical)": squared_error_of_fit_mean_from_init_mean,
@@ -76,9 +75,9 @@ def fit_gaussians():
                 / initial_cov_det,
                 "Trace of Fit Cov / Trace of Init Cov (Numerical)": np.trace(fit_cov)
                 / initial_cov_trace,
-                # "Fit Covariance (Numerical)": (
-                #     fit_covariance[0, 0] if data_dim == 1 else np.nan
-                # ),
+                "Fit Covariance (Numerical)": (
+                    fit_cov[0, 0] if data_dim == 1 else np.nan
+                ),
                 "Covariance Structure": "Isotropic",
             },
         )

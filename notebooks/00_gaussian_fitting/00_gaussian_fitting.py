@@ -4,6 +4,7 @@ import matplotlib.transforms
 import numpy as np
 import os
 import pandas as pd
+import scipy.stats
 import seaborn as sns
 import wandb
 
@@ -11,8 +12,8 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
-refresh = True
+refresh = False
+# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -24,12 +25,20 @@ sweep_ids = [
     "rzxsbi6y",  # Massive Gaussian fitting experiment.
 ]
 
-run_histories_df = src.analyze.download_wandb_project_runs_histories(
-    wandb_project_path="universal-vlm-jailbreak-eval",
+run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
+    wandb_project_path="rerevisiting-model-collapse-fit-gaussians",
     data_dir=data_dir,
     sweep_ids=sweep_ids,
     refresh=refresh,
     wandb_username=wandb.api.default_entity,
+)
+
+# Fix the stupidly named column.
+run_histories_df.rename(
+    columns={
+        "Num. Samples per Iteration (num_samples_per_iteration)": "Num. Samples per Iteration (T)",
+    },
+    inplace=True,
 )
 
 
@@ -89,7 +98,7 @@ for num_samples_per_iter in run_histories_df["Num. Samples per Iteration (T)"].u
             bbox_inches="tight",
             dpi=300,
         )
-    plt.show()
+    # plt.show()
 
 plt.close()
 g = sns.relplot(
