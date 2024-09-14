@@ -64,8 +64,9 @@ g = sns.relplot(
     col="dataset",
     hue="dataset",
 )
-g.set_axis_labels("Epoch", "Loss")
+g.set_axis_labels("Epoch", "Eval Loss on Real Data")
 g.set_titles("{col_name}")
+sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="sft_language_model_loss_vs_epoch_by_dataset",
