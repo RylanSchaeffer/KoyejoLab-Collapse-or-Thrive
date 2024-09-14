@@ -122,7 +122,7 @@ def download_wandb_project_runs_histories(
     sweep_ids: List[str] = None,
     wandb_run_history_samples: int = 10000,
     refresh: bool = False,
-    wandb_username: str = None,
+    wandb_username: Optional[str] = None,
     filetype: str = "csv",
     nrows_to_read: Optional[int] = None,
 ) -> pd.DataFrame:
