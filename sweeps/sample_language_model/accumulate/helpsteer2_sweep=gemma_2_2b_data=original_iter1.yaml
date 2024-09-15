@@ -1,15 +1,15 @@
 program: src/sample_language_model/sample_language_model.py
 entity: jkazdan
-project: revisiting_collapse
+project: ft_collapse
 method: grid
 parameters:
   max_seq_length:
     values: [ 512 ]
   model_name_or_path:
     values: [
-      "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd0",
-      "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd1",
-      "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsd2",
+      "jkazdan/collapse_gemma-2-2b_hs2_iter1_sftsd0",
+      "jkazdan/collapse_gemma-2-2b_hs2_iter1_sftsd1",
+      "jkazdan/collapse_gemma-2-2b_hs2_iter1_sftsd2",
     ]
   num_samples_per_prompt:
     values: [ 64 ]

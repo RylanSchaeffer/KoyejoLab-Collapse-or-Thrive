@@ -1,12 +1,12 @@
 program: src/sft_language_model/sft_language_model.py
-entity: rylan
-project: rerevisiting-model-collapse-sft_language_model
+entity: jkazdan
+project: revisiting_collapse
 method: grid
 parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_replace_iter4_sftsdXXX_temp1.0_max_seq_len512" ]
+        values: [ "jkazdan/collapse_gemma-2-2b_hs2_replace_iter4_sftsdXXX_temp1_max_seq_len512" ]
       fraction:
         values: [ 1.0 ]
       shuffle_seed:
@@ -18,7 +18,7 @@ parameters:
       device_map:
         values: [ "auto" ]
       final_model_name_or_path:
-        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_replace_iter5_sftsdXXX" ]
+        values: [ "jkazdan/collapse_gemma-2-2b_hs2_replace_iter5_sftsdXXX" ]
       initial_model_name_or_path:
         values: [ "google/gemma-2-2b" ]
       torch_dtype:
