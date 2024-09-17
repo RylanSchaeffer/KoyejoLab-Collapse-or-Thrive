@@ -139,7 +139,8 @@ def download_wandb_project_runs_histories(
             wandb_username = api.viewer.username
 
         runs_histories_list = []
-        for sweep_id in sweep_ids:
+        print("getting the run histories")
+        for iteration, sweep_id in enumerate(sweep_ids):
             sweep = api.sweep(f"{wandb_username}/{wandb_project_path}/{sweep_id}")
             for run in tqdm(sweep.runs):
                 # https://community.wandb.ai/t/run-history-returns-different-values-on-almost-each-call/2431/4
@@ -165,6 +166,7 @@ def download_wandb_project_runs_histories(
                 ]
                 history.drop(columns=generation_columns, inplace=True)
                 history["run_id"] = run.id
+                history["model_fitting_iteration"] = iteration
                 runs_histories_list.append(history)
 
         assert len(runs_histories_list) > 0
@@ -219,9 +221,9 @@ def extract_key_value_from_df_col(
         new_col_name = key_in_dict
 
     df[new_col_name] = df[col_name].apply(
-        lambda x: x[key_in_dict]
-        if isinstance(x, dict)
-        else ast.literal_eval(x)[key_in_dict]
+        lambda x: (
+            x[key_in_dict] if isinstance(x, dict) else ast.literal_eval(x)[key_in_dict]
+        )
     )
     return df
 
