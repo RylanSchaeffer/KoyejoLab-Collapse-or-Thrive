@@ -85,7 +85,7 @@ g = sns.relplot(
     marker="o",
     markersize=15,
 )
-g.set_axis_labels(y_var="Eval Loss on Real Data")
+g.set_axis_labels(y_var="Eval Cross Entropy on Real Data")
 g.set_titles(col_template="{col_name}")
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
@@ -109,7 +109,7 @@ g = sns.relplot(
     col="Setting",
     hue="Model Fitting Iteration",
 )
-g.set_axis_labels("Epoch", "Eval Loss on Real Data")
+g.set_axis_labels("Epoch", "Eval Cross Entropy on Real Data")
 g.set_titles("{col_name}")
 sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
 src.plot.save_plot_with_multiple_extensions(
