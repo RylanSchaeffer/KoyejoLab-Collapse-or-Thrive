@@ -16,27 +16,28 @@ refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
-    refresh=False,
+    refresh=refresh,
 )
 
 wandb_username = "jkazdan"
-# wandb_sweep_ids = [
-#     "q3vd9gyn",  # HelpSteer2   Gemma2-2B   Data=Original   Iteration1
-#     "2cvqmk2v",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
-#     "wtr77bli",
-#     "6s09ojgi",
-#     "8ha71vqm",
-#     "nqd2zmqg",
-#     "63o3uyjm",
-#     "utw2dy7b",
-# ]
-# for the accumulate data
 wandb_sweep_ids = [
     "q3vd9gyn",  # HelpSteer2   Gemma2-2B   Data=Original   Iteration1
-    "3ryjlwpj",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
-    "no35bjlm",
-    "hjshv3r0",
+    "2cvqmk2v",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
+    "wtr77bli",
+    "6s09ojgi",
+    "8ha71vqm",
+    "nqd2zmqg",
+    "63o3uyjm",
+    "utw2dy7b",
+    # "xqjudpc0"
 ]
+# # for the accumulate data
+# wandb_sweep_ids = [
+#     "q3vd9gyn",  # HelpSteer2   Gemma2-2B   Data=Original   Iteration1
+#     "3ryjlwpj",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
+#     "no35bjlm",
+#     "hjshv3r0",
+# ]
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     wandb_project_path="ft_collapse",
     data_dir=data_dir,
