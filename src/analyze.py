@@ -14,6 +14,34 @@ from tqdm import tqdm
 import src.globals
 
 
+def determine_model_fitting_iteration_from_datasets_str(datasets_str: str) -> int:
+    if datasets_str == "nvidia/HelpSteer2":
+        return 1
+    num_datasets = len(datasets_str.split(","))
+    if num_datasets > 1:
+        # In this case, we are accumulating.
+        # Thus, the number of datasets is the number of model-fitting iterations.
+        return num_datasets
+    elif "iter" in datasets_str:
+        return int(datasets_str.split("iter")[1].split("_", maxsplit=1)[0]) + 1
+    else:
+        raise ValueError("How the hell did you end up here?")
+
+
+def determine_setting_from_datasets_str(datasets_str: str) -> str:
+    num_datasets = len(datasets_str.split(","))
+    if num_datasets == 1:
+        if datasets_str == "nvidia/HelpSteer2":
+            setting = "Original"
+        else:
+            setting = "Replace"
+    elif num_datasets > 1:
+        setting = "Accumulate"
+    else:
+        raise ValueError("How the hell did you end up here?")
+    return setting
+
+
 def download_wandb_project_runs_configs(
     wandb_project_path: str,
     data_dir: str,
@@ -208,6 +236,66 @@ def download_wandb_project_runs_histories(
     print(f"Loaded {runs_histories_df_path} from disk.")
 
     return runs_histories_df
+
+
+def duplicate_real_data_runs(
+    runs_configs_df: pd.DataFrame,
+    runs_histories_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    # First, add "Setting" from runs_configs_df to runs_histories_df .
+    # Otherwise, this will cause problems down the line.
+    runs_histories_df["Setting"] = runs_histories_df["run_id"].map(
+        runs_configs_df.set_index("run_id")["Setting"]
+    )
+
+    # Find runs with "Model Fitting Iteration" == 1.
+    real_data_runs_ids = runs_configs_df[
+        runs_configs_df["Model Fitting Iteration"] == 1
+    ]["run_id"].unique()
+
+    # Duplicate those rows in runs_configs_df.
+    duplicate_real_data_runs_configs_df = runs_configs_df[
+        runs_configs_df["run_id"].isin(real_data_runs_ids)
+    ].copy()
+
+    # Set the copies' "Setting" to "Replace".
+    duplicate_real_data_runs_configs_df["Setting"] = "Replace"
+
+    # Set the original rows' "Setting" to "Accumulate".
+    runs_configs_df.loc[
+        runs_configs_df["run_id"].isin(real_data_runs_ids), "Setting"
+    ] = "Accumulate"
+
+    # Combine back in.
+    runs_configs_df = pd.concat(
+        [runs_configs_df, duplicate_real_data_runs_configs_df],
+        ignore_index=True,
+    ).reset_index(drop=True)
+
+    # Duplicate those rows in runs_histories_df.
+    duplicate_real_data_runs_histories_df = runs_histories_df[
+        runs_histories_df["run_id"].isin(real_data_runs_ids)
+    ].copy()
+
+    # Set the copies' "Setting" to "Replace".
+    duplicate_real_data_runs_histories_df["Setting"] = "Replace"
+
+    # Set the original rows' "Setting" to "Accumulate".
+    runs_histories_df.loc[
+        runs_histories_df["run_id"].isin(real_data_runs_ids), "Setting"
+    ] = "Accumulate"
+
+    # Combine back in.
+    runs_histories_df = pd.concat(
+        [runs_histories_df, duplicate_real_data_runs_histories_df],
+        ignore_index=True,
+    ).reset_index(drop=True)
+
+    # Check that no more Original remains.
+    assert not (runs_configs_df["Setting"] == "Original").any()
+    assert not (runs_histories_df["Setting"] == "Original").any()
+
+    return runs_configs_df, runs_histories_df
 
 
 # parse data config blob into cols
