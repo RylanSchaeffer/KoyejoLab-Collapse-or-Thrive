@@ -11,8 +11,8 @@ import src.analyze
 import src.plot
 
 
+# refresh = False
 refresh = False
-# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -29,14 +29,28 @@ wandb_sweep_ids = [
     "nqd2zmqg",
     "63o3uyjm",
     "utw2dy7b",
-    # "xqjudpc0"
+    "xqjudpc0",
+    "2z9f726i",
+    "3ryjlwpj",
+    "no35bjlm",
+    "hjshv3r0",
+    "nxzbezmg",
+    "oqr34ktf",
+    "zc52fldc",
+    "tph8nlpx",
+    "ccac0yx5",
+    "r32e7rwu",
 ]
-# # for the accumulate data
+# for the accumulate data
 # wandb_sweep_ids = [
 #     "q3vd9gyn",  # HelpSteer2   Gemma2-2B   Data=Original   Iteration1
 #     "3ryjlwpj",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
 #     "no35bjlm",
 #     "hjshv3r0",
+#     "nxzbezmg",
+#     "oqr34ktf",
+#     "nqd2zmqg",
+#     "tph8nlpx"
 # ]
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     wandb_project_path="ft_collapse",
@@ -89,7 +103,7 @@ g = sns.relplot(
     marker="o",
     markersize=15,
 )
-g.set_axis_labels(y_var="Eval Cross Entropy on Real Data")
+g.set_axis_labels(y_var="Eval Cross Entropy on Real Data", fontsize=20)
 g.set_titles(col_template="{col_name}")
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
@@ -113,6 +127,7 @@ g = sns.relplot(
     col="Setting",
     hue="Model Fitting Iteration",
 )
+g.set_yticklabels(fontsize=10)
 g.set_axis_labels("Epoch", "Eval Cross Entropy on Real Data")
 g.set_titles("{col_name}")
 sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
