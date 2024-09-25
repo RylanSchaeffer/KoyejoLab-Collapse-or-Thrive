@@ -1,6 +1,10 @@
+# import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pprint
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KernelDensity
 from typing import Any, Dict, Tuple
 import wandb
 
@@ -10,7 +14,7 @@ import src.globals
 def fit_kernel_density_estimators():
     run = wandb.init(
         project="rerevisiting-model-collapse-fit-kde",
-        config=src.globals.DEFAULT_GAUSSIAN_FITTING_CONFIG,
+        config=src.globals.DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG,
         entity=wandb.api.default_entity,
     )
 
@@ -22,78 +26,73 @@ def fit_kernel_density_estimators():
     # Set the random seed for reproducibility
     np.random.seed(wandb_config["seed"])
 
-    data_dim = wandb_config["data_dim"]
-    num_samples_per_iteration = wandb_config["num_samples_per_iteration"]
-    num_iterations = wandb_config["num_iterations"]
-    sigma_squared = wandb_config["sigma_squared"]
-    setting = wandb_config["setting"]
-    assert setting in {"Replace", "Accumulate"}
+    assert wandb_config["setting"] in {"Replace", "Accumulate"}
 
     # This doesn't need to be Gaussian, but Gaussian is a fine starting point.
-    init_mean = np.zeros(data_dim)
-    init_cov = sigma_squared * np.eye(data_dim)
-    initial_cov_det = np.linalg.det(init_cov)
-    initial_cov_trace = np.trace(init_cov)
-    init_data = np.random.multivariate_normal(
-        mean=init_mean, cov=init_cov, size=num_samples_per_iteration
+    init_data = create_init_data(
+        num_samples_per_iteration=wandb_config["num_samples_per_iteration"],
+        data_config_dict=wandb_config["data_config"],
+    )
+    init_data_train, init_data_test = train_test_split(init_data, test_size=0.5)
+    data = init_data_train.copy()
+
+    kde = KernelDensity(
+        kernel=wandb_config["kernel"], bandwidth=wandb_config["kernel_bandwidth"]
     )
 
-    data = init_data.copy()
-
     # Iterate over the number of iterations
-    for iteration_idx in range(1, num_iterations + 1):
-        # Fit the mean and covariance of the data.
-        fit_mean, fit_cov = fit_mean_and_cov_from_data(data)
+    for iteration_idx in range(1, wandb_config["num_iterations"] + 1):
+        # Fit the data.
+        kde.fit(data)
 
-        # Compute the squared error of the replaced mean.
-        squared_error_of_fit_mean_from_init_mean = np.sum(
-            np.square(fit_mean - init_mean)
-        )
-
-        # Compute the determinant of the covariance matrices.
+        # Score the test data.
+        neg_log_prob_test = -kde.score_samples(init_data_test)
+        mean_neg_log_prob_test = np.mean(neg_log_prob_test)
 
         # Create data for the next model-fitting iteration.
-        new_data = np.random.multivariate_normal(
-            mean=fit_mean,
-            cov=fit_cov,
-            size=num_samples_per_iteration,
-        )
-        if setting == "Replace":
+        new_data = kde.sample(n_samples=wandb_config["num_samples_per_iteration"])
+        if wandb_config["setting"] == "Replace":
             data = new_data
-        elif setting == "Accumulate":
+        elif wandb_config["setting"] == "Accumulate":
             data = np.concatenate((data, new_data))
 
         wandb.log(
             {
-                "Data Dimension": data_dim,
-                "Num. Samples per Iteration": num_samples_per_iteration,
-                "Initial Noise": sigma_squared,  # "sigma_squared" is the noise variance for the true data.
                 "Model-Fitting Iteration": iteration_idx,
-                "Setting": setting,
-                "Squared Error of Fit Mean (Numerical)": squared_error_of_fit_mean_from_init_mean,
-                "Det of Fit Cov / Det of Init Cov (Numerical)": np.linalg.det(fit_cov)
-                / initial_cov_det,
-                "Trace of Fit Cov / Trace of Init Cov (Numerical)": np.trace(fit_cov)
-                / initial_cov_trace,
-                "Fit Covariance (Numerical)": (
-                    fit_cov[0, 0] if data_dim == 1 else np.nan
-                ),
-                "Covariance Structure": "Isotropic",
+                "Mean Negative Log Prob (Test)": mean_neg_log_prob_test,
             },
         )
+
+    # Visualize the final KDE.
+    # plt.close()
 
     wandb.finish()
 
 
-def fit_mean_and_cov_from_data(data: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    mu = np.mean(data, axis=0)
-    Sigma = np.cov(data, rowvar=False, bias=True)
-    # If the input data has shape 1, np.cov will squeeze this out, but we do not want this.
-    if data.shape[1] == 1:
-        Sigma = np.reshape(Sigma, newshape=(1, 1))
-    return mu, Sigma
+def create_init_data(num_samples_per_iteration: int, data_config_dict: Dict[str, Any]):
+    dataset_name = data_config_dict["dataset_name"]
+    if dataset_name == "blobs":
+        init_data = datasets.make_blobs(
+            n_samples=num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )[0]
+    elif dataset_name == "moons":
+        # We multiply by 2 because we need test data too!
+        init_data = datasets.make_moons(
+            n_samples=2 * num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )[0]
+    elif dataset_name == "circles":
+        # We multiply by 2 because we need test data too!
+        init_data = datasets.make_circles(
+            n_samples=2 * num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )[0]
+    else:
+        raise ValueError(f"Unknown dataset name: {dataset_name}")
+    return init_data
 
 
 if __name__ == "__main__":
     fit_kernel_density_estimators()
-    print("Finished fit_gaussians.py!")
+    print("Finished fit_kde.py!")

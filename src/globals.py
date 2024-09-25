@@ -1,3 +1,15 @@
+DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
+    "data_config": {"dataset_name": "moons", "dataset_kwargs": {"noise": 0.05}},
+    "kernel": "gaussian",
+    "kernel_bandwidth": 0.75,
+    # "kernel": "tophat",
+    "num_samples_per_iteration": 89,
+    "num_iterations": 100,
+    "seed": 0,
+    "setting": "Accumulate",
+}
+
+
 DEFAULT_GAUSSIAN_FITTING_CONFIG = {
     "data_dim": 7,
     "num_samples_per_iteration": 89,
@@ -6,6 +18,7 @@ DEFAULT_GAUSSIAN_FITTING_CONFIG = {
     "setting": "Accumulate",
     "sigma_squared": 1.0,
 }
+
 
 DEFAULT_PRETRAINING_CONFIG = {
     "data_config": {
