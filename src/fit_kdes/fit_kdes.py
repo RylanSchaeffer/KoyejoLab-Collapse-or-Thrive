@@ -13,7 +13,7 @@ import src.globals
 
 def fit_kernel_density_estimators():
     run = wandb.init(
-        project="rerevisiting-model-collapse-fit-kde",
+        project="rerevisiting-model-collapse-fit-kdes",
         config=src.globals.DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG,
         entity=wandb.api.default_entity,
     )
@@ -95,4 +95,4 @@ def create_init_data(num_samples_per_iteration: int, data_config_dict: Dict[str,
 
 if __name__ == "__main__":
     fit_kernel_density_estimators()
-    print("Finished fit_kde.py!")
+    print("Finished fit_kdes.py!")

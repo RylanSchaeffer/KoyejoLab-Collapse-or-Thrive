@@ -1,6 +1,6 @@
-program: src/fit_gaussians/fit_gaussians.py
+program: src/fit_kdes/fit_kdes.py
 entity: rylan
-project: rerevisiting-model-collapse-fit-gaussians
+project: rerevisiting-model-collapse-fit-kdes
 method: grid
 parameters:
   data_config:
