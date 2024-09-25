@@ -62,6 +62,22 @@ runs_configs_df = runs_configs_df.rename(
     }
 )
 
+# Rename "Kernel" column values.
+runs_configs_df["Kernel"] = runs_configs_df["Kernel"].map(
+    {
+        "gaussian": "Gaussian",
+        "tophat": "Top Hat",
+    }
+)
+
+# Rename "Dataset" column values.
+runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
+    {
+        "moons": "Moons",
+    }
+)
+
+
 run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
     wandb_project_path="rerevisiting-model-collapse-fit-kdes",
     data_dir=data_dir,
@@ -100,6 +116,8 @@ g = sns.relplot(
     row="Dataset",
     hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
+    style="Kernel",
+    style_order=["Gaussian", "Top Hat"],
     palette="mako_r",
     legend="full",
     facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
@@ -130,6 +148,8 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
         row="Dataset",
         hue="Num. Samples per Iteration",
         hue_norm=matplotlib.colors.LogNorm(),
+        style="Kernel",
+        style_order=["Gaussian", "Top Hat"],
         palette="mako_r",
         legend="full",
         facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
