@@ -21,9 +21,7 @@ from transformers import AutoTokenizer, set_seed
 from trl import (
     SFTConfig,
     SFTTrainer,
-    get_peft_config,
 )
-from trl.trainer.utils import SIMPLE_QUERY_CHAT_TEMPLATE
 from typing import Any, Dict
 import wandb
 
@@ -34,12 +32,12 @@ import src.models
 tqdm.pandas()
 
 
-def train_supervised_finetuning():
+def pretrain():
     num_visible_devices = torch.cuda.device_count()
     assert num_visible_devices > 0, "No CUDA devices available."
     run = wandb.init(
-        project="rerevisiting-model-collapse-sft_language_model",
-        config=src.globals.DEFAULT_SUPERVISED_FINETUNING_CONFIG,
+        project="rerevisiting-model-collapse-pretrain_language_model",
+        config=src.globals.DEFAULT_PRETRAINING_CONFIG,
         entity=wandb.api.default_entity,
     )
 
@@ -152,20 +150,13 @@ def train_supervised_finetuning():
     tokenizer.padding_side = "right"
 
     datasets_dict = src.data.create_datasets_dict(
-        training_stage="sft",
+        training_stage="pretrain",
         tokenizer=tokenizer,
         data_config_dict=data_config_dict,
         max_length=sft_config.max_seq_length,
     )
     train_dataset = datasets_dict["train"]
-
-    # We always want to evaluate only on the real data. Thus, overwrite the eval dataset.
-    eval_dataset = src.data.create_dataset_for_supervised_finetuning(
-        tokenizer=tokenizer,
-        dataset_name="nvidia/HelpSteer2",
-        max_length=sft_config.max_seq_length,
-        remove_columns=True,
-    )["eval"]
+    eval_dataset = datasets_dict["eval"]
 
     model = src.models.create_model_automodelforcausallm(
         model_config_dict=model_config_dict,
@@ -210,5 +201,5 @@ if __name__ == "__main__":
         os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(
             [str(i) for i in range(torch.cuda.device_count())]
         )
-    train_supervised_finetuning()
+    pretrain()
     print("Finished train_supervised_finetuning.py!")
