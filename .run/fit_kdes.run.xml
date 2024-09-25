@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="fit_kde" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="fit_kdes" type="PythonConfigurationType" factoryName="Python">
     <module name="KoyejoLab-Re-Revisiting-Model-Collapse" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />

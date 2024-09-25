@@ -29,11 +29,14 @@ def fit_kernel_density_estimators():
     assert wandb_config["setting"] in {"Replace", "Accumulate"}
 
     # This doesn't need to be Gaussian, but Gaussian is a fine starting point.
-    init_data = create_init_data(
+    init_data_train = create_init_data(
         num_samples_per_iteration=wandb_config["num_samples_per_iteration"],
         data_config_dict=wandb_config["data_config"],
     )
-    init_data_train, init_data_test = train_test_split(init_data, test_size=0.5)
+    init_data_test = create_init_data(
+        num_samples_per_iteration=500,  # Hard coded to ensure we have a large population of data for evaluation.
+        data_config_dict=wandb_config["data_config"],
+    )
     data = init_data_train.copy()
 
     kde = KernelDensity(
@@ -46,8 +49,7 @@ def fit_kernel_density_estimators():
         kde.fit(data)
 
         # Score the test data.
-        neg_log_prob_test = -kde.score_samples(init_data_test)
-        mean_neg_log_prob_test = np.mean(neg_log_prob_test)
+        mean_neg_log_prob_test = -np.mean(kde.score_samples(init_data_test))
 
         # Create data for the next model-fitting iteration.
         new_data = kde.sample(n_samples=wandb_config["num_samples_per_iteration"])
