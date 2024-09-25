@@ -158,8 +158,9 @@ def pretrain():
     train_dataset = datasets_dict["train"]
     eval_dataset = datasets_dict["eval"]
 
-    model = src.models.create_model_automodelforcausallm(
+    model = src.models.create_custom_automodelforcausallm(
         model_config_dict=model_config_dict,
+        train_dataset=train_dataset,
     )
 
     trainer = SFTTrainer(

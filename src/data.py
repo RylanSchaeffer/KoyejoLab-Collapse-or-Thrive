@@ -169,5 +169,4 @@ def preprocess_tinystories_pretrain(
             tokenized_input["attention_mask"].append(1)
         new_examples["input_ids"].append(tokenized_input["input_ids"])
         new_examples["attention_mask"].append(tokenized_input["attention_mask"])
-
     return new_examples

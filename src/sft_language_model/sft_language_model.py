@@ -167,7 +167,7 @@ def train_supervised_finetuning():
         remove_columns=True,
     )["eval"]
 
-    model = src.models.create_model_automodelforcausallm(
+    model = src.models.load_automodelforcausallm(
         model_config_dict=model_config_dict,
     )
 
