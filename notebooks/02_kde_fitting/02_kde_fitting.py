@@ -22,7 +22,10 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 wandb_sweep_ids = [
-    "ybhk4l3h",  # Moons KDE (~6k runs).
+    "2crqw2ne",  # Blobs (~6k runs).
+    "r66vkvsf",  # Circles (~6k runs).
+    "tq2fnp98",  # Moons (~6k runs).
+    "hutjomj9",  # Swiss Roll (~6k runs).
 ]
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(

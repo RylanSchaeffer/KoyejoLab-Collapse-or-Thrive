@@ -184,7 +184,7 @@ def download_wandb_project_runs_histories(
                         print("Retrying...")
                         time.sleep(3)
 
-                # Skip this run.
+                # Skip this run if the API doesn't let us download it.
                 if history is None or history.empty:
                     continue
 
