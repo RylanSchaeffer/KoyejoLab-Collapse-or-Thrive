@@ -14,19 +14,28 @@ from transformers import PreTrainedTokenizer
 from typing import Any, Dict, List, Optional, Union
 
 
-def create_datasets_for_supervised_finetuning(
+def create_datasets_dict(
+    training_stage: str,
     data_config_dict: Dict[str, Any],
     tokenizer: Optional[PreTrainedTokenizer] = None,
     max_length: Optional[int] = None,
     remove_columns: bool = True,
 ) -> Dict[str, Union[Dataset]]:
+    assert training_stage in {"pretrain", "sft"}
+    if training_stage == "pretrain":
+        create_dataset_fn = create_dataset_for_pretraining
+    elif training_stage == "sft":
+        create_dataset_fn = create_dataset_for_supervised_finetuning
+    else:
+        raise ValueError(f"Invalid training stage: {training_stage}")
+
     dataset_names: List[str] = data_config_dict["dataset"].split(",")
 
     # Load each dataset individually.
     combined_datasets_dict = defaultdict(list)
     for dataset_name in dataset_names:
         with PartialState().local_main_process_first():
-            datasets_dict = create_dataset_for_supervised_finetuning(
+            datasets_dict = create_dataset_fn(
                 tokenizer=tokenizer,
                 dataset_name=dataset_name,
                 max_length=max_length,
@@ -41,15 +50,6 @@ def create_datasets_for_supervised_finetuning(
         combined_datasets_dict[key] = concatenate_datasets(
             dsets=combined_datasets_dict[key],
         )
-
-    # We always want to evaluate only on the real data. Thus, overwrite the eval dataset.
-    eval_dataset = create_dataset_for_supervised_finetuning(
-        tokenizer=tokenizer,
-        dataset_name="nvidia/HelpSteer2",
-        max_length=max_length,
-        remove_columns=remove_columns,
-    )["eval"]
-    combined_datasets_dict["eval"] = eval_dataset
 
     # Shuffle the datasets.
     for key in combined_datasets_dict.keys():
@@ -174,4 +174,22 @@ def preprocess_nvidia_helpsteer2_sft(
         new_examples["input_ids"].append(tokenized_input["input_ids"])
         new_examples["attention_mask"].append(tokenized_input["attention_mask"])
 
+    return new_examples
+
+
+def preprocess_tinystories_pretrain(
+    tokenizer: PreTrainedTokenizer, examples: Dict[str, Any]
+) -> Dict[str, List]:
+    new_examples = {
+        "input_ids": [],
+        "attention_mask": [],
+    }
+    for text in examples["text"]:
+        tokenized_input = tokenizer(text)
+        # Make certain we end on EOS. See: https://arxiv.org/abs/2403.17031
+        if tokenized_input["input_ids"][-1] != tokenizer.eos_token_id:
+            tokenized_input["input_ids"].append(tokenizer.eos_token_id)
+            tokenized_input["attention_mask"].append(1)
+        new_examples["input_ids"].append(tokenized_input["input_ids"])
+        new_examples["attention_mask"].append(tokenized_input["attention_mask"])
     return new_examples

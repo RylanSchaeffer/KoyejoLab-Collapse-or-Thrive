@@ -151,15 +151,23 @@ def train_supervised_finetuning():
     # when training a model in half-precision. You might consider adding tokenizer.padding_side = 'right' to your code.
     tokenizer.padding_side = "right"
 
-    datasets_dict = src.data.create_datasets_for_supervised_finetuning(
+    datasets_dict = src.data.create_datasets_dict(
+        training_stage="sft",
         tokenizer=tokenizer,
         data_config_dict=data_config_dict,
         max_length=sft_config.max_seq_length,
     )
     train_dataset = datasets_dict["train"]
-    eval_dataset = datasets_dict["eval"]
 
-    model = src.models.create_model_automodelforcausallm(
+    # We always want to evaluate only on the real data. Thus, overwrite the eval dataset.
+    eval_dataset = src.data.create_dataset_for_supervised_finetuning(
+        tokenizer=tokenizer,
+        dataset_name="nvidia/HelpSteer2",
+        max_length=sft_config.max_seq_length,
+        remove_columns=True,
+    )["eval"]
+
+    model = src.models.load_automodelforcausallm(
         model_config_dict=model_config_dict,
     )
 

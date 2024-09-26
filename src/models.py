@@ -23,7 +23,16 @@ from trl import (
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
-def create_model_automodelforcausallm(
+def create_custom_automodelforcausallm(
+    model_config_dict: Dict[str, Any],
+    train_dataset: datasets.Dataset,
+):
+    # https://github.com/RylanSchaeffer/KoyejoLab-Revisiting-Model-Collapse/blob/f570f5025259c2b7d2008b23b08fef6e765eac15/language_modeling_experiments/train_multigpu.py#L312
+    # https://github.com/RylanSchaeffer/KoyejoLab-Revisiting-Model-Collapse/blob/f570f5025259c2b7d2008b23b08fef6e765eac15/language_modeling_experiments/train_multigpu.py#L426
+    raise NotImplementedError
+
+
+def load_automodelforcausallm(
     model_config_dict: Dict[str, Any]
 ) -> AutoModelForCausalLM:
     if model_config_dict["torch_dtype"] == "bfloat16":
