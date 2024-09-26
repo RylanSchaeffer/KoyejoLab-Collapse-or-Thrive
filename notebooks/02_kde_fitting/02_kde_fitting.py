@@ -76,7 +76,10 @@ runs_configs_df["Kernel"] = runs_configs_df["Kernel"].map(
 # Rename "Dataset" column values.
 runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
     {
+        "blobs": "Blobs",
+        "circles": "Circles",
         "moons": "Moons",
+        "swiss_roll": "Swiss Roll",
     }
 )
 
@@ -117,6 +120,7 @@ g = sns.relplot(
     col="Setting",
     col_order=["Replace", "Accumulate"],
     row="Dataset",
+    row_order=["Blobs", "Circles", "Moons", "Swiss Roll"],
     hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
     style="Kernel",
@@ -149,6 +153,7 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
         col="Setting",
         col_order=["Replace", "Accumulate"],
         row="Dataset",
+        row_order=["Blobs", "Circles", "Moons", "Swiss Roll"],
         hue="Num. Samples per Iteration",
         hue_norm=matplotlib.colors.LogNorm(),
         style="Kernel",
