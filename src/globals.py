@@ -1,5 +1,10 @@
 DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
-    "data_config": {"dataset_name": "moons", "dataset_kwargs": {"noise": 0.05}},
+    "data_config": {
+        "dataset_name": "blobs",
+        # "dataset_name": "moons",
+        # "dataset_name": "swiss_roll",
+        "dataset_kwargs": {"noise": 0.05},
+    },
     "kernel": "gaussian",
     "kernel_bandwidth": 0.75,
     # "kernel": "tophat",

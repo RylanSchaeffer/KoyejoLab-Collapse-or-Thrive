@@ -79,15 +79,19 @@ def create_init_data(num_samples_per_iteration: int, data_config_dict: Dict[str,
             **data_config_dict["dataset_kwargs"],
         )[0]
     elif dataset_name == "moons":
-        # We multiply by 2 because we need test data too!
         init_data = datasets.make_moons(
-            n_samples=2 * num_samples_per_iteration,
+            n_samples=num_samples_per_iteration,
             **data_config_dict["dataset_kwargs"],
         )[0]
     elif dataset_name == "circles":
-        # We multiply by 2 because we need test data too!
         init_data = datasets.make_circles(
-            n_samples=2 * num_samples_per_iteration,
+            n_samples=num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )[0]
+    elif dataset_name == "swiss_roll":
+        # We multiply by 2 because we need test data too!
+        init_data = datasets.make_swiss_roll(
+            n_samples=num_samples_per_iteration,
             **data_config_dict["dataset_kwargs"],
         )[0]
     else:
