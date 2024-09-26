@@ -14,9 +14,9 @@ parameters:
       setting:
         values: ["replace"]
       num_real:
-        values: [ 16 ]
+        values: [ 128 ]
       num_synthetic:
-        values: [ 16 ]
+        values: [ 512 ]
   model_config:
     parameters:
       attn_implementation:
@@ -24,7 +24,7 @@ parameters:
       device_map:
         values: [ "auto" ]
       final_model_name_or_path:
-        values: [ "16R-16F-gemma-2-2b_hs2_iter1_sftsdXXX" ]
+        values: [ "128R-512F-gemma-2-2b_hs2_iter1_sftsdXXX" ]
       initial_model_name_or_path:
         values: [ "google/gemma-2-2b" ]
       torch_dtype:

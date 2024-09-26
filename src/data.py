@@ -1,5 +1,5 @@
 from collections import defaultdict
-
+import numpy as np
 from accelerate import PartialState
 from datasets import (
     concatenate_datasets,
@@ -9,7 +9,7 @@ from datasets import (
 )
 from functools import partial
 
-from torch.utils.data import Dataset, random_split
+from torch.utils.data import Dataset, Subset, random_split
 from transformers import PreTrainedTokenizer
 from typing import Any, Dict, List, Optional, Union
 
@@ -32,6 +32,7 @@ def create_datasets_for_supervised_finetuning(
                 max_length=max_length,
                 remove_columns=remove_columns,
             )
+            # key and value are the train and test data
             for key, value in datasets_dict.items():
                 combined_datasets_dict[key].append(value)
 
@@ -56,6 +57,65 @@ def create_datasets_for_supervised_finetuning(
             seed=data_config_dict["shuffle_seed"]
         )
 
+    return combined_datasets_dict
+
+
+def create_mixed_datasets_for_supervised_finetuning(
+    data_config_dict: Dict[str, Any],
+    tokenizer: Optional[PreTrainedTokenizer] = None,
+    max_length: Optional[int] = None,
+    remove_columns: bool = True,
+) -> Dict[str, Union[Dataset]]:
+    dataset_names: List[str] = data_config_dict["dataset"].split(",")
+
+    # Load each dataset individually.
+    combined_datasets_dict = defaultdict(list)
+    for dataset_name in dataset_names:
+        with PartialState().local_main_process_first():
+            datasets_dict = create_dataset_for_supervised_finetuning(
+                tokenizer=tokenizer,
+                dataset_name=dataset_name,
+                max_length=max_length,
+                remove_columns=remove_columns,
+            )
+            # keys indicate train and validation data
+            if dataset_name == "nvidia/HelpSteer2":
+                train_data = datasets_dict["train"]
+                indices = np.arange(len(train_data))[: data_config_dict["num_real"]]
+                datasets_dict["train"] = train_data.select(indices)
+                # print(datasets_dict['train'])
+            else:
+                train_data = datasets_dict["train"]
+                indices = np.arange(len(train_data))[
+                    : data_config_dict["num_synthetic"]
+                ]
+                datasets_dict["train"] = train_data.select(indices)
+            for key, value in datasets_dict.items():
+                combined_datasets_dict[key].append(value)
+
+    # Combine the datasets.
+    for key in combined_datasets_dict.keys():
+        combined_datasets_dict[key] = concatenate_datasets(
+            dsets=combined_datasets_dict[key],
+        )
+
+    # We always want to evaluate only on the real data. Thus, overwrite the eval dataset.
+    eval_dataset = create_dataset_for_supervised_finetuning(
+        tokenizer=tokenizer,
+        dataset_name="nvidia/HelpSteer2",
+        max_length=max_length,
+        remove_columns=remove_columns,
+    )["eval"]
+    combined_datasets_dict["eval"] = eval_dataset
+
+    # Shuffle the datasets.
+    for key in combined_datasets_dict.keys():
+        combined_datasets_dict[key] = combined_datasets_dict[key].shuffle(
+            seed=data_config_dict["shuffle_seed"]
+        )
+    print("the lengths of the final datasets are:")
+    print(len(combined_datasets_dict["train"]))
+    print(len(combined_datasets_dict["test"]))
     return combined_datasets_dict
 
 
