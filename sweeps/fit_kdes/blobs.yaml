@@ -11,8 +11,6 @@ parameters:
         parameters:
           n_features:
             values: [2]
-          noise:
-            values: [0.05]
   kernel:
     values: ["gaussian", "tophat"]
   kernel_bandwidth:
