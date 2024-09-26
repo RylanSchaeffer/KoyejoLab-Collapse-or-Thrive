@@ -12,8 +12,8 @@ import src.analyze
 import src.plot
 
 
-refresh = False
-# refresh = True
+# refresh = False
+refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -125,7 +125,8 @@ g = sns.relplot(
     hue_norm=matplotlib.colors.LogNorm(),
     style="Kernel",
     style_order=["Gaussian", "Top Hat"],
-    palette="mako_r",
+    palette="cool",
+    # palette="mako_r",
     legend="full",
     facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
 )
@@ -158,7 +159,8 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
         hue_norm=matplotlib.colors.LogNorm(),
         style="Kernel",
         style_order=["Gaussian", "Top Hat"],
-        palette="mako_r",
+        palette="cool",
+        # palette="mako_r",
         legend="full",
         facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
     )

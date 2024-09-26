@@ -39,6 +39,8 @@ x = np.linspace(-4, 4, 1000)
 model_fitting_iteration_indices = sorted(
     run_histories_df["Model-Fitting Iteration"].unique()
 )
+# MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11.
+# Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
 cmap = matplotlib.cm.get_cmap("Spectral_r", len(model_fitting_iteration_indices))
 
 for num_samples_per_iter in run_histories_df["Num. Samples per Iteration"].unique():
@@ -106,7 +108,8 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
         col_order=["Replace", "Accumulate"],
         kind="line",
         facet_kws={"sharey": True, "sharex": True, "margin_titles": True},
-        palette="mako_r",
+        palette="cool",
+        # palette="mako_r",
         legend="full",
     )
     g.set(yscale="log")
@@ -135,7 +138,8 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
         col_order=["Replace", "Accumulate"],
         kind="line",
         facet_kws={"sharey": True, "sharex": True, "margin_titles": True},
-        palette="mako_r",
+        palette="cool",
+        # palette="mako_r",
         legend="full",
     )
     g.set_axis_labels(
@@ -162,7 +166,8 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
         col_order=["Replace", "Accumulate"],
         kind="line",
         facet_kws={"sharey": True, "sharex": True, "margin_titles": True},
-        palette="mako_r",
+        palette="cool",
+        # palette="mako_r",
         legend="full",
     )
     g.set_axis_labels("Model-Fitting Iteration", r"$Tr(\hat{\Sigma}_n) / Tr(\Sigma_0)$")
