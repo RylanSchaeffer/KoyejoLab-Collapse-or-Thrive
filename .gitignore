@@ -2,3 +2,5 @@
 wandb/
 **/__pycache__/
 models/
+**/data/
+**/data*
