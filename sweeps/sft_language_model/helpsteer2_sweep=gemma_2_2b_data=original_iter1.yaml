@@ -20,7 +20,7 @@ parameters:
       initial_model_name_or_path:
         values: [ "google/gemma-2-2b" ]
       final_model_name_or_path:
-        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX" ]
+        values: [ "jkazdan/collapse_gemma-2-2b_hs2_iter1_sftsdXXX" ]
       torch_dtype:
         values: [ "bfloat16" ]
   sft_trainer_config:

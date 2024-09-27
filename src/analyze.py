@@ -27,6 +27,19 @@ def determine_model_fitting_iteration_from_datasets_str(datasets_str: str) -> in
     else:
         raise ValueError("How the hell did you end up here?")
 
+def determine_data_ratio_from_datasets_str(datasets_str: str) -> int:
+    if datasets_str == "nvidia/HelpSteer2":
+        return 1
+    num_datasets = len(datasets_str.split(","))
+    if num_datasets > 1:
+        # In this case, we are accumulating.
+        # Thus, the number of datasets is the number of model-fitting iterations.
+        return num_datasets
+    elif "iter" in datasets_str:
+        return int(datasets_str.split("iter")[1].split("_", maxsplit=1)[0]) + 1
+    else:
+        raise ValueError("How the hell did you end up here?")
+
 
 def determine_setting_from_datasets_str(datasets_str: str) -> str:
     num_datasets = len(datasets_str.split(","))
@@ -307,7 +320,6 @@ def extract_key_value_from_df_col(
 ):
     if new_col_name is None:
         new_col_name = key_in_dict
-
     df[new_col_name] = df[col_name].apply(
         lambda x: (
             x[key_in_dict] if isinstance(x, dict) else ast.literal_eval(x)[key_in_dict]
