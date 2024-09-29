@@ -27,6 +27,7 @@ def determine_model_fitting_iteration_from_datasets_str(datasets_str: str) -> in
     else:
         raise ValueError("How the hell did you end up here?")
 
+
 def determine_data_ratio_from_datasets_str(datasets_str: str) -> int:
     if datasets_str == "nvidia/HelpSteer2":
         return 1

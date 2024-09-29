@@ -18,12 +18,14 @@ DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
 }
 
 
-DEFAULT_GAUSSIAN_FITTING_CONFIG = {
+DEFAULT_MULTIVARIATE_GAUSSIAN_MODELING_CONFIG = {
     "data_dim": 7,
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
-    "setting": "Accumulate",
+    # "setting": "Accumulate",
+    "setting": "Accumulate-Subsample",
+    # "setting": "Replace",
     "sigma_squared": 1.0,
 }
 

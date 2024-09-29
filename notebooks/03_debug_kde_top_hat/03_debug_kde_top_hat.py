@@ -73,7 +73,22 @@ runs_configs_df["Kernel"] = runs_configs_df["Kernel"].map(
     }
 )
 
-# TODO: Debug Top Hat.
+# Keep only Kernel == "Top Hat" to debug.
+runs_configs_df = runs_configs_df[runs_configs_df["Kernel"] == "Top Hat"]
+
+# What fraction of runs has a final loss that is finite?
+print(
+    "Fraction of Top Hat runs with a final test loss that is finite:",
+    np.mean(np.isfinite(runs_configs_df["Mean Negative Log Prob (Test)"])),
+)
+
+# Conditioned on the setting, what fraction of runs has a final loss that is finite?
+print(
+    "Fraction of Top Hat runs with a final test loss that is finite, conditioned on the setting:",
+    runs_configs_df.groupby("Setting")["Mean Negative Log Prob (Test)"].apply(
+        lambda x: np.mean(np.isfinite(x))
+    ),
+)
 
 # Rename "Dataset" column values.
 runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
