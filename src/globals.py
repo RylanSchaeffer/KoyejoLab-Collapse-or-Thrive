@@ -1,4 +1,4 @@
-DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
+DEFAULT_KERNEL_DENSITY_FITTING_CONFIG = {
     "data_config": {
         "dataset_name": "blobs",
         # "dataset_name": "moons",
@@ -14,7 +14,9 @@ DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
-    "setting": "Accumulate",
+    # "setting": "Accumulate",
+    "setting": "Accumulate-Subsample",
+    # "setting": "Replace",
 }
 
 

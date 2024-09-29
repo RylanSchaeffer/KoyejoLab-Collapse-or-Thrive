@@ -72,8 +72,10 @@ def fit_gaussians():
         )
         if setting == "Replace":
             all_data = new_data
-        elif setting == "Accumulate":
+        elif setting in {"Accumulate", "Accumulate-Subsample"}:
             all_data = np.concatenate((all_data, new_data))
+        else:
+            raise ValueError(f"Unknown setting: {setting}")
 
         wandb.log(
             {
