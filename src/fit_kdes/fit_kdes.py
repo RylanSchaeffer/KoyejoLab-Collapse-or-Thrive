@@ -2,13 +2,12 @@
 import numpy as np
 import os
 import pprint
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KernelDensity
 from typing import Any, Dict, Tuple
 import wandb
 
 import src.globals
+import src.data
 
 
 def fit_kernel_density_estimators():
@@ -31,14 +30,14 @@ def fit_kernel_density_estimators():
     num_samples_per_iteration = wandb_config["num_samples_per_iteration"]
 
     # This doesn't need to be Gaussian, but Gaussian is a fine starting point.
-    init_data_train = create_init_data(
+    init_data_train = src.data.create_dataset_for_kde(
         num_samples_per_iteration=wandb_config["num_samples_per_iteration"],
         data_config_dict=wandb_config["data_config"],
-    )
-    init_data_test = create_init_data(
+    )[0]
+    init_data_test = src.data.create_dataset_for_kde(
         num_samples_per_iteration=500,  # Hard coded to ensure we have a large population of data for evaluation.
         data_config_dict=wandb_config["data_config"],
-    )
+    )[0]
     all_data = init_data_train.copy()
 
     kde = KernelDensity(
@@ -84,34 +83,6 @@ def fit_kernel_density_estimators():
     # plt.close()
 
     wandb.finish()
-
-
-def create_init_data(num_samples_per_iteration: int, data_config_dict: Dict[str, Any]):
-    dataset_name = data_config_dict["dataset_name"]
-    if dataset_name == "blobs":
-        init_data = datasets.make_blobs(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    elif dataset_name == "moons":
-        init_data = datasets.make_moons(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    elif dataset_name == "circles":
-        init_data = datasets.make_circles(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    elif dataset_name == "swiss_roll":
-        # We multiply by 2 because we need test data too!
-        init_data = datasets.make_swiss_roll(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    else:
-        raise ValueError(f"Unknown dataset name: {dataset_name}")
-    return init_data
 
 
 if __name__ == "__main__":

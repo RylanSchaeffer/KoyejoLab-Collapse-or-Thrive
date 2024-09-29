@@ -73,7 +73,8 @@ runs_configs_df["Kernel"] = runs_configs_df["Kernel"].map(
     }
 )
 
-# TODO: Debug Top Hat.
+# Remove kernel Top Hat because most of the negative log likelihoods are NaN.
+runs_configs_df = runs_configs_df[runs_configs_df["Kernel"] == "Gaussian"]
 
 # Rename "Dataset" column values.
 runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
