@@ -1,5 +1,5 @@
 program: src/sft_language_model/sft_language_model.py
-entity: jkazdan
+entity: rylan
 project: ft_collapse
 method: grid
 parameters:
