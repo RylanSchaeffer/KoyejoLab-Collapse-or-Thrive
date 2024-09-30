@@ -19,6 +19,7 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 wandb_username = "rylan"
 wandb_sweep_ids = [
     "tb6c1gtr",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration1
+    "ct9m8x0l",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration2
     "y4oue58c",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 1)
     "3cn97hta",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 2)
     "4ec1abqn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration2
@@ -29,6 +30,7 @@ wandb_sweep_ids = [
     "8ewj0gxn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration7
     "y7gsymxb",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration8
     "n2ren5e9",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration1
+    "5i6bj5re",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration2
 ]
 
 
@@ -60,9 +62,9 @@ runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
     src.analyze.determine_model_fitting_iteration_from_datasets_str
 )
 
-# TODO: Determine the number of samples per iteration.
+runs_configs_df["Num. Samples per Iteration"] = 12500
 
-runs_configs_df["Task"] = "SFT of LMs"
+runs_configs_df["Task"] = "SFT Language Models"
 
 plt.close()
 g = sns.relplot(
@@ -72,15 +74,19 @@ g = sns.relplot(
     y="eval/loss",
     col="paradigm",
     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
+    row="Task",
     palette="cool",
     legend="full",
-    # hue="Num. Samples per Iteration",
+    hue="Num. Samples per Iteration",
     # hue_norm=matplotlib.colors.LogNorm(),
-    marker="o",
-    markersize=15,
+    # marker="o",
+    # markersize=15,
+    facet_kws={"sharex": True, "sharey": True, "margin_titles": True},
 )
-g.set_axis_labels(y_var="Eval Cross Entropy on Real Data", fontsize=20)
-g.set_titles(col_template="{col_name}")
+g.set(yscale="log")
+g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
+g.set_titles(col_template="{col_name}", row_template="{row_name}")
+sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="y=eval_loss_x=model_fitting_iteration_col=setting",
