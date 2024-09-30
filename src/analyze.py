@@ -181,7 +181,7 @@ def download_wandb_project_runs_histories(
             wandb_username = api.viewer.username
 
         runs_histories_list = []
-        print("getting the run histories")
+        print("Downloading runs' histories...")
         for iteration, sweep_id in enumerate(sweep_ids):
             sweep = api.sweep(f"{wandb_username}/{wandb_project_path}/{sweep_id}")
             for run in tqdm(sweep.runs):
