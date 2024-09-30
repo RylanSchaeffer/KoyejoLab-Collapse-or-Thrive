@@ -1,5 +1,5 @@
 program: src/sample_language_model/sample_language_model.py
-entity: jkazdan
+entity: rylan
 project: revisiting_collapse
 method: grid
 parameters:
@@ -7,9 +7,9 @@ parameters:
     values: [ 512 ]
   model_name_or_path:
     values: [
-      # "jkazdan/collapse_gemma-2-2b_hs2_accumulate_iter2_sftsd0",
-      # "jkazdan/collapse_gemma-2-2b_hs2_accumulate_iter2_sftsd1",
-      "jkazdan/collapse_gemma-2-2b_hs2_accumulate_iter2_sftsd2",
+      "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter2_sftsd0",
+      "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter2_sftsd1",
+      "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter2_sftsd2",
     ]
   num_samples_per_prompt:
     values: [ 64 ]
