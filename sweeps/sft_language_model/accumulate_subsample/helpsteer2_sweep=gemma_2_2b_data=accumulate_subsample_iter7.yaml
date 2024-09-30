@@ -23,6 +23,8 @@ parameters:
         values: [ "google/gemma-2-2b" ]
       torch_dtype:
         values: [ "bfloat16" ]
+  paradigm:
+    values: ["Accumulate-Subsample"]
   sft_trainer_config:
     parameters:
       data_seed:

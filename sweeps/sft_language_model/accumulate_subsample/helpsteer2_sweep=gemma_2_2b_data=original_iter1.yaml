@@ -23,6 +23,8 @@ parameters:
         values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX" ]
       torch_dtype:
         values: [ "bfloat16" ]
+  paradigm:
+    values: [ "Accumulate-Subsample" ]
   sft_trainer_config:
     parameters:
       data_seed:
