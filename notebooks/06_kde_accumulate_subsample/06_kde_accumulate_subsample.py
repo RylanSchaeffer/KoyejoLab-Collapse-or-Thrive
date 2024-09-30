@@ -103,7 +103,7 @@ run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histori
 run_histories_df["Task"] = "Kernel Density Estimation"
 
 run_histories_df = run_histories_df.rename(
-    columns={"Mean Negative Log Prob (Test)": "Eval NLL on Real Data"}
+    columns={"Mean Negative Log Prob (Test)": "NLL on Real Data (Test)"}
 )
 
 extended_run_histories_df = run_histories_df.merge(
@@ -126,7 +126,7 @@ g = sns.relplot(
     data=extended_run_histories_df,
     kind="line",
     x="Model-Fitting Iteration",
-    y="Eval NLL on Real Data",
+    y="NLL on Real Data (Test)",
     col="Setting",
     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
     row="Task",
@@ -159,7 +159,7 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
         data=bandwidth_group_df,
         kind="line",
         x="Model-Fitting Iteration",
-        y="Eval NLL on Real Data",
+        y="NLL on Real Data (Test)",
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
         row="Task",

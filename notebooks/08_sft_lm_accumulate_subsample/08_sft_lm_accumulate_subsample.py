@@ -62,7 +62,6 @@ runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
     src.analyze.determine_model_fitting_iteration_from_datasets_str
 )
 
-# TODO: Determine the number of samples per iteration.
 runs_configs_df["Num. Samples per Iteration"] = 12500
 
 runs_configs_df["Task"] = "SFT Language Models"
@@ -85,7 +84,7 @@ g = sns.relplot(
     facet_kws={"sharex": True, "sharey": True, "margin_titles": True},
 )
 g.set(yscale="log")
-g.set_axis_labels(y_var="Eval Cross Entropy on Real Data", fontsize=20)
+g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
 g.set_titles(col_template="{col_name}", row_template="{row_name}")
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
