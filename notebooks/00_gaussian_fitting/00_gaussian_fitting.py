@@ -115,7 +115,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     g.set(yscale="log")
     g.set_axis_labels(
         "Model-Fitting Iteration",
-        r"$\lvert \lvert \hat{\mu}_n - \mu_0 \lvert \lvert_2^2$",
+        r"$\lvert \lvert \hat{\mu}^{(t)} - \mu^{(0)} \lvert \lvert_2^2$",
     )
     g.set_titles(
         col_template="{col_name}",
@@ -143,7 +143,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
         legend="full",
     )
     g.set_axis_labels(
-        "Model-Fitting Iteration", r"$det(\hat{\Sigma}_n) / det(\Sigma_0)$"
+        "Model-Fitting Iteration", r"$det(\hat{\Sigma}^{(t)}) / det(\Sigma^{(0)})$"
     )
     g.set_titles(
         col_template="{col_name}",
@@ -170,7 +170,9 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
         # palette="mako_r",
         legend="full",
     )
-    g.set_axis_labels("Model-Fitting Iteration", r"$Tr(\hat{\Sigma}_n) / Tr(\Sigma_0)$")
+    g.set_axis_labels(
+        "Model-Fitting Iteration", r"$Tr(\hat{\Sigma}^{(t)}) / Tr(\Sigma^{(0)})$"
+    )
     g.set_titles(
         col_template="{col_name}",
     )
