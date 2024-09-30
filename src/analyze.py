@@ -78,28 +78,31 @@ def download_wandb_project_runs_configs(
 
         sweep_results_list = []
         for sweep_id in sweep_ids:
-            sweep = api.sweep(f"{wandb_username}/{wandb_project_path}/{sweep_id}")
-            for run in tqdm(sweep.runs):
-                # .summary contains the output keys/values for metrics like accuracy.
-                #  We call ._json_dict to omit large files
-                summary = run.summary._json_dict
+            try:
+                sweep = api.sweep(f"{wandb_username}/{wandb_project_path}/{sweep_id}")
+                for run in tqdm(sweep.runs):
+                    # .summary contains the output keys/values for metrics like accuracy.
+                    #  We call ._json_dict to omit large files
+                    summary = run.summary._json_dict
 
-                # .config contains the hyperparameters.
-                #  We remove special values that start with _.
-                summary.update(
-                    {k: v for k, v in run.config.items() if not k.startswith("_")}
-                )
+                    # .config contains the hyperparameters.
+                    #  We remove special values that start with _.
+                    summary.update(
+                        {k: v for k, v in run.config.items() if not k.startswith("_")}
+                    )
 
-                summary.update(
-                    {
-                        "State": run.state,
-                        "Sweep": run.sweep.id if run.sweep is not None else None,
-                        "run_id": run.id,
-                    }
-                )
-                # .name is the human-readable name of the run.
-                summary.update({"run_name": run.name})
-                sweep_results_list.append(summary)
+                    summary.update(
+                        {
+                            "State": run.state,
+                            "Sweep": run.sweep.id if run.sweep is not None else None,
+                            "run_id": run.id,
+                        }
+                    )
+                    # .name is the human-readable name of the run.
+                    summary.update({"run_name": run.name})
+                    sweep_results_list.append(summary)
+            except:
+                pass
 
         runs_configs_df = pd.DataFrame(sweep_results_list)
         runs_configs_df.reset_index(inplace=True, drop=True)
@@ -312,6 +315,17 @@ def duplicate_real_data_runs(
     return runs_configs_df, runs_histories_df
 
 
+def extract_function(
+    col_name: str, key_in_dict: Optional[str] = None, new_col_name: Optional[str] = None
+):
+    if isinstance(x, dict):
+        return x[key_in_dict]
+    elif x.isnan():
+        return np.NaN
+    else:
+        return ast.literal_eval(x)[key_in_dict]
+
+
 # parse data config blob into cols
 def extract_key_value_from_df_col(
     df: pd.DataFrame,
@@ -321,9 +335,14 @@ def extract_key_value_from_df_col(
 ):
     if new_col_name is None:
         new_col_name = key_in_dict
+    for ele in df[col_name]:
+        print(ele)
+        print(type(ele))
     df[new_col_name] = df[col_name].apply(
         lambda x: (
-            x[key_in_dict] if isinstance(x, dict) else ast.literal_eval(x)[key_in_dict]
+            x[key_in_dict]
+            if isinstance(x, dict)
+            else (np.NaN if isinstance(x, float) else ast.literal_eval(x)[key_in_dict])
         )
     )
     return df
