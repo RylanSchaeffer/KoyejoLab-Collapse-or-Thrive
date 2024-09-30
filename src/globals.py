@@ -20,14 +20,25 @@ DEFAULT_KERNEL_DENSITY_FITTING_CONFIG = {
 }
 
 
+DEFAULT_LINEAR_REGRESSION_FITTING_CONFIG = {
+    "data_dim": 7,
+    "num_samples_per_iteration": 89,
+    "num_iterations": 100,
+    "seed": 0,
+    # "setting": "Accumulate",
+    # "setting": "Accumulate-Subsample",
+    "setting": "Replace",
+    "sigma_squared": 1.0,
+}
+
 DEFAULT_MULTIVARIATE_GAUSSIAN_MODELING_CONFIG = {
     "data_dim": 7,
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
     # "setting": "Accumulate",
-    "setting": "Accumulate-Subsample",
-    # "setting": "Replace",
+    # "setting": "Accumulate-Subsample",
+    "setting": "Replace",
     "sigma_squared": 1.0,
 }
 

@@ -19,11 +19,16 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 wandb_sweep_ids = [
-    "2crqw2ne",  # Blobs (~6k runs).
-    "r66vkvsf",  # Circles (~6k runs).
-    "tq2fnp98",  # Moons (~6k runs).
-    "hutjomj9",  # Swiss Roll (~6k runs).
+    "2crqw2ne",  # Blobs (~3k runs); Accumulate and Replace.
+    "n1sl4eew",  # Blobs (~1.5k runs); Accumulate-Subsample.
+    "r66vkvsf",  # Circles (~3k runs); Accumulate and Replace.
+    "tlstv5l3",  # Circles (~1.5k runs); Accumulate-Subsample.
+    "tq2fnp98",  # Moons (~3k runs); Accumulate and Replace.
+    "3w2og2ru",  # Moons (~1.5k runs); Accumulate-Subsample.
+    "hutjomj9",  # Swiss Roll (~3k runs); Accumulate and Replace.
+    "cffq8fyu",  # Swiss Roll (~1.5k runs); Accumulate-Subsample.
 ]
+
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     wandb_project_path="rerevisiting-model-collapse-fit-kdes",
@@ -70,7 +75,7 @@ runs_configs_df["Kernel"] = runs_configs_df["Kernel"].map(
     }
 )
 
-# Remove kernel Top Hat because most of the negative log likelihoods are NaN.
+# Remove kernel Top Hat because most of the negative log likelihoods are inf.
 runs_configs_df = runs_configs_df[runs_configs_df["Kernel"] == "Gaussian"]
 
 # Rename "Dataset" column values.
@@ -118,13 +123,13 @@ g = sns.relplot(
     x="Model-Fitting Iteration",
     y="Eval NLL on Real Data",
     col="Setting",
-    col_order=["Replace", "Accumulate"],
+    col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
     row="Dataset",
     row_order=["Blobs", "Circles", "Moons", "Swiss Roll"],
     hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
     style="Kernel",
-    style_order=["Gaussian", "Top Hat"],
+    style_order=["Gaussian"],
     palette="cool",
     # palette="mako_r",
     legend="full",
@@ -152,13 +157,13 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
         x="Model-Fitting Iteration",
         y="Eval NLL on Real Data",
         col="Setting",
-        col_order=["Replace", "Accumulate"],
+        col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
         row="Dataset",
         row_order=["Blobs", "Circles", "Moons", "Swiss Roll"],
         hue="Num. Samples per Iteration",
         hue_norm=matplotlib.colors.LogNorm(),
         style="Kernel",
-        style_order=["Gaussian", "Top Hat"],
+        style_order=["Gaussian"],
         palette="cool",
         # palette="mako_r",
         legend="full",

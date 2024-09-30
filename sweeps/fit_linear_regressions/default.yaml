@@ -1,20 +1,10 @@
-program: src/fit_kdes/fit_kdes.py
+program: src/fit_gaussians/fit_gaussians.py
 entity: rylan
-project: rerevisiting-model-collapse-fit-kdes
+project: rerevisiting-model-collapse-fit-gaussians
 method: grid
 parameters:
-  data_config:
-    parameters:
-      dataset_name:
-        values: ["blobs"]
-      dataset_kwargs:
-        parameters:
-          n_features:
-            values: [2]
-  kernel:
-    values: ["gaussian"]
-  kernel_bandwidth:
-    values: [0.1, 0.5, 1.0]
+  data_dim:
+    values: [ 1, 3, 10, 31, 100 ]
   num_samples_per_iteration:
     values: [10, 32, 100, 316, 1000]
   num_iterations:
@@ -24,5 +14,10 @@ parameters:
   setting:
     values: [
       "Accumulate",
+      "Accumulate-Subsample",
       "Replace",
+    ]
+  sigma_squared:
+    values: [
+      0.1, 1.0, 10.
     ]
