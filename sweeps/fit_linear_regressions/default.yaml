@@ -1,6 +1,6 @@
-program: src/fit_gaussians/fit_gaussians.py
+program: src/fit_linear_regressions/fit_linear_regressions.py
 entity: rylan
-project: rerevisiting-model-collapse-fit-gaussians
+project: rerevisiting-model-collapse-fit-lin-regr
 method: grid
 parameters:
   data_dim:
