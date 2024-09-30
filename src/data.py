@@ -157,6 +157,45 @@ def create_dataset_for_supervised_finetuning(
     return datasets_dict
 
 
+def create_dataset_for_kde(
+    num_samples_per_iteration: int, data_config_dict: Dict[str, Any]
+):
+    dataset_name = data_config_dict["dataset_name"]
+
+    if dataset_name == "blobs":
+        from sklearn import datasets
+
+        init_data = datasets.make_blobs(
+            n_samples=num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )
+    elif dataset_name == "circles":
+        from sklearn import datasets
+
+        init_data = datasets.make_circles(
+            n_samples=num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )
+    elif dataset_name == "moons":
+        from sklearn import datasets
+
+        init_data = datasets.make_moons(
+            n_samples=num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )
+    elif dataset_name == "swiss_roll":
+        from sklearn import datasets
+
+        # We multiply by 2 because we need test data too!
+        init_data = datasets.make_swiss_roll(
+            n_samples=num_samples_per_iteration,
+            **data_config_dict["dataset_kwargs"],
+        )
+    else:
+        raise ValueError(f"Unknown dataset name: {dataset_name}")
+    return init_data
+
+
 def preprocess_nvidia_helpsteer2_sft(
     tokenizer: PreTrainedTokenizer, examples: Dict[str, Any]
 ) -> Dict[str, List]:

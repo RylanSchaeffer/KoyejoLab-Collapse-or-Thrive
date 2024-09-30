@@ -2,19 +2,18 @@
 import numpy as np
 import os
 import pprint
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KernelDensity
 from typing import Any, Dict, Tuple
 import wandb
 
 import src.globals
+import src.data
 
 
 def fit_kernel_density_estimators():
     run = wandb.init(
         project="rerevisiting-model-collapse-fit-kdes",
-        config=src.globals.DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG,
+        config=src.globals.DEFAULT_KERNEL_DENSITY_FITTING_CONFIG,
         entity=wandb.api.default_entity,
     )
 
@@ -26,18 +25,20 @@ def fit_kernel_density_estimators():
     # Set the random seed for reproducibility
     np.random.seed(wandb_config["seed"])
 
-    assert wandb_config["setting"] in {"Replace", "Accumulate"}
+    setting = wandb_config["setting"]
+    assert setting in {"Accumulate", "Accumulate-Subsample", "Replace"}
+    num_samples_per_iteration = wandb_config["num_samples_per_iteration"]
 
     # This doesn't need to be Gaussian, but Gaussian is a fine starting point.
-    init_data_train = create_init_data(
+    init_data_train = src.data.create_dataset_for_kde(
         num_samples_per_iteration=wandb_config["num_samples_per_iteration"],
         data_config_dict=wandb_config["data_config"],
-    )
-    init_data_test = create_init_data(
+    )[0]
+    init_data_test = src.data.create_dataset_for_kde(
         num_samples_per_iteration=500,  # Hard coded to ensure we have a large population of data for evaluation.
         data_config_dict=wandb_config["data_config"],
-    )
-    data = init_data_train.copy()
+    )[0]
+    all_data = init_data_train.copy()
 
     kde = KernelDensity(
         kernel=wandb_config["kernel"], bandwidth=wandb_config["kernel_bandwidth"]
@@ -45,18 +46,31 @@ def fit_kernel_density_estimators():
 
     # Iterate over the number of iterations
     for iteration_idx in range(1, wandb_config["num_iterations"] + 1):
-        # Fit the data.
-        kde.fit(data)
+        if setting in {"Accumulate", "Replace"}:
+            # Fit the data.
+            kde.fit(all_data)
+        elif setting in {"Accumulate-Subsample"}:
+            # Subsample the total data.
+            subsample_idx = np.random.choice(
+                np.arange(all_data.shape[0]),
+                size=num_samples_per_iteration,
+                replace=False,
+            )
+            kde.fit(all_data[subsample_idx])
+        else:
+            raise ValueError(f"Unknown setting: {setting}")
 
         # Score the test data.
         mean_neg_log_prob_test = -np.mean(kde.score_samples(init_data_test))
 
         # Create data for the next model-fitting iteration.
-        new_data = kde.sample(n_samples=wandb_config["num_samples_per_iteration"])
-        if wandb_config["setting"] == "Replace":
-            data = new_data
-        elif wandb_config["setting"] == "Accumulate":
-            data = np.concatenate((data, new_data))
+        new_data = kde.sample(n_samples=num_samples_per_iteration)
+        if setting == "Replace":
+            all_data = new_data
+        elif setting in {"Accumulate", "Accumulate-Subsample"}:
+            all_data = np.concatenate((all_data, new_data))
+        else:
+            raise ValueError(f"Unknown setting: {setting}")
 
         wandb.log(
             {
@@ -69,34 +83,6 @@ def fit_kernel_density_estimators():
     # plt.close()
 
     wandb.finish()
-
-
-def create_init_data(num_samples_per_iteration: int, data_config_dict: Dict[str, Any]):
-    dataset_name = data_config_dict["dataset_name"]
-    if dataset_name == "blobs":
-        init_data = datasets.make_blobs(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    elif dataset_name == "moons":
-        init_data = datasets.make_moons(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    elif dataset_name == "circles":
-        init_data = datasets.make_circles(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    elif dataset_name == "swiss_roll":
-        # We multiply by 2 because we need test data too!
-        init_data = datasets.make_swiss_roll(
-            n_samples=num_samples_per_iteration,
-            **data_config_dict["dataset_kwargs"],
-        )[0]
-    else:
-        raise ValueError(f"Unknown dataset name: {dataset_name}")
-    return init_data
 
 
 if __name__ == "__main__":

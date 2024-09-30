@@ -1,4 +1,4 @@
-DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
+DEFAULT_KERNEL_DENSITY_FITTING_CONFIG = {
     "data_config": {
         "dataset_name": "blobs",
         # "dataset_name": "moons",
@@ -14,16 +14,31 @@ DEFAULT_KERNDEL_DENSITY_FITTING_CONFIG = {
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
-    "setting": "Accumulate",
+    # "setting": "Accumulate",
+    "setting": "Accumulate-Subsample",
+    # "setting": "Replace",
 }
 
 
-DEFAULT_GAUSSIAN_FITTING_CONFIG = {
+DEFAULT_LINEAR_REGRESSION_FITTING_CONFIG = {
     "data_dim": 7,
     "num_samples_per_iteration": 89,
     "num_iterations": 100,
     "seed": 0,
-    "setting": "Accumulate",
+    # "setting": "Accumulate",
+    # "setting": "Accumulate-Subsample",
+    "setting": "Replace",
+    "sigma_squared": 1.0,
+}
+
+DEFAULT_MULTIVARIATE_GAUSSIAN_MODELING_CONFIG = {
+    "data_dim": 7,
+    "num_samples_per_iteration": 89,
+    "num_iterations": 100,
+    "seed": 0,
+    # "setting": "Accumulate",
+    # "setting": "Accumulate-Subsample",
+    "setting": "Replace",
     "sigma_squared": 1.0,
 }
 
@@ -104,6 +119,7 @@ DEFAULT_SUPERVISED_FINETUNING_CONFIG = {
         # "dataset": "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsd0_iter1_temp1.0_max_seq_len512",
         # "dataset": "roneneldan/TinyStories",
         # "dataset": "RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsdXXX_iter1_temp1.0_max_seq_len512",
+        "fraction": 1.0,
         "shuffle_seed": 0,
     },
     "model_config": {

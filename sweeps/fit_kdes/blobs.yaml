@@ -12,7 +12,7 @@ parameters:
           n_features:
             values: [2]
   kernel:
-    values: ["gaussian", "tophat"]
+    values: ["gaussian"]
   kernel_bandwidth:
     values: [0.1, 0.5, 1.0]
   num_samples_per_iteration:

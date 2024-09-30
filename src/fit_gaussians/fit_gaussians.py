@@ -10,7 +10,7 @@ import src.globals
 def fit_gaussians():
     run = wandb.init(
         project="rerevisiting-model-collapse-fit-gaussians",
-        config=src.globals.DEFAULT_GAUSSIAN_FITTING_CONFIG,
+        config=src.globals.DEFAULT_MULTIVARIATE_GAUSSIAN_MODELING_CONFIG,
         entity=wandb.api.default_entity,
     )
 
@@ -27,7 +27,7 @@ def fit_gaussians():
     num_iterations = wandb_config["num_iterations"]
     sigma_squared = wandb_config["sigma_squared"]
     setting = wandb_config["setting"]
-    assert setting in {"Replace", "Accumulate"}
+    assert setting in {"Accumulate", "Accumulate-Subsample", "Replace"}
 
     # This doesn't need to be Gaussian, but Gaussian is a fine starting point.
     init_mean = np.zeros(data_dim)
@@ -38,12 +38,24 @@ def fit_gaussians():
         mean=init_mean, cov=init_cov, size=num_samples_per_iteration
     )
 
-    data = init_data.copy()
+    all_data = init_data.copy()
 
     # Iterate over the number of iterations
     for iteration_idx in range(1, num_iterations + 1):
         # Fit the mean and covariance of the data.
-        fit_mean, fit_cov = fit_mean_and_cov_from_data(data)
+        if setting in {"Accumulate", "Replace"}:
+            fit_mean, fit_cov = fit_mean_and_cov_from_data(all_data)
+        elif setting in {"Accumulate-Subsample"}:
+            # Subsample the total data.
+            subsample_idx = np.random.choice(
+                np.arange(all_data.shape[0]),
+                size=num_samples_per_iteration,
+                replace=False,
+            )
+            subsample_data = all_data[subsample_idx]
+            fit_mean, fit_cov = fit_mean_and_cov_from_data(subsample_data)
+        else:
+            raise ValueError(f"Unknown setting: {setting}")
 
         # Compute the squared error of the replaced mean.
         squared_error_of_fit_mean_from_init_mean = np.sum(
@@ -59,9 +71,11 @@ def fit_gaussians():
             size=num_samples_per_iteration,
         )
         if setting == "Replace":
-            data = new_data
-        elif setting == "Accumulate":
-            data = np.concatenate((data, new_data))
+            all_data = new_data
+        elif setting in {"Accumulate", "Accumulate-Subsample"}:
+            all_data = np.concatenate((all_data, new_data))
+        else:
+            raise ValueError(f"Unknown setting: {setting}")
 
         wandb.log(
             {

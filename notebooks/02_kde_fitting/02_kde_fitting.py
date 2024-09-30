@@ -1,10 +1,7 @@
-import ast
 import matplotlib.pyplot as plt
 import matplotlib.transforms
-import numpy as np
 import os
 import pandas as pd
-import scipy.stats
 import seaborn as sns
 import wandb
 
@@ -12,8 +9,8 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
-refresh = True
+refresh = False
+# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -72,6 +69,9 @@ runs_configs_df["Kernel"] = runs_configs_df["Kernel"].map(
         "tophat": "Top Hat",
     }
 )
+
+# Remove kernel Top Hat because most of the negative log likelihoods are NaN.
+runs_configs_df = runs_configs_df[runs_configs_df["Kernel"] == "Gaussian"]
 
 # Rename "Dataset" column values.
 runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
