@@ -1,12 +1,12 @@
 program: src/sft_language_model/sft_language_model.py
 entity: rylan
-project: revisiting_collapse
+project: ft_collapse
 method: grid
 parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX_temp1_max_seq_len512" ]
+        values: [ "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter1_sftsdXXX_temp1_max_seq_len512" ]
       fraction:
         values: [ 1.0 ]
       shuffle_seed:

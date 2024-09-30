@@ -1,6 +1,6 @@
 program: src/sft_language_model/sft_language_model.py
 entity: rylan
-project: revisiting_collapse
+project: ft_collapse
 method: grid
 parameters:
   data_config:
