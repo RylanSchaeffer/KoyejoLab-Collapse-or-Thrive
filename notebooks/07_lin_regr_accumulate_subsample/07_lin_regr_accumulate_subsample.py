@@ -56,7 +56,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     g.set(yscale="log")
     g.set_axis_labels(
         "Model-Fitting Iteration",
-        r"$\lvert \lvert \hat{y}^{n} - \mu_0 \lvert \lvert_2^2$",
+        r"$\mathbb{E}[\lvert \lvert \hat{y}^{(t)} - y \lvert \lvert_2^2]$",
     )
     g.set_titles(
         col_template="{col_name}",
