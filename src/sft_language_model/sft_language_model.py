@@ -14,6 +14,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "True"
 # This is needed for deterministic to work.
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
+import numpy as np
 import pprint
 import torch
 from tqdm import tqdm
@@ -158,6 +159,14 @@ def train_supervised_finetuning():
         max_length=sft_config.max_seq_length,
     )
     train_dataset = datasets_dict["train"]
+
+    if wandb_config["data_config"]["fraction"] < 1.0:
+        indices = np.random.choice(
+            np.arange(len(train_dataset)),
+            size=int(wandb_config["data_config"]["fraction"] * len(train_dataset)),
+            replace=False,
+        )
+        train_dataset = train_dataset.select(indices)
 
     # We always want to evaluate only on the real data. Thus, overwrite the eval dataset.
     eval_dataset = src.data.create_dataset_for_supervised_finetuning(
