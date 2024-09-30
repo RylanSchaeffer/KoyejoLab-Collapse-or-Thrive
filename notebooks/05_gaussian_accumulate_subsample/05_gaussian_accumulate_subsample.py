@@ -34,6 +34,8 @@ run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histori
     wandb_username=wandb.api.default_entity,
 )
 
+run_histories_df["Task"] = "Gaussian Modeling"
+
 for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     ["Data Dimension"]
 ):
@@ -46,6 +48,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
         hue_norm=matplotlib.colors.LogNorm(),
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
+        row="Task",
         kind="line",
         facet_kws={"sharey": True, "sharex": True, "margin_titles": True},
         palette="cool",
@@ -58,6 +61,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     )
     g.set_titles(
         col_template="{col_name}",
+        row_template="{row_name}",
     )
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
     src.plot.save_plot_with_multiple_extensions(
@@ -69,13 +73,14 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     plt.close()
     g = sns.relplot(
         data=run_histories_data_dim_df,
+        kind="line",
         x="Model-Fitting Iteration",
         y="Det of Fit Cov / Det of Init Cov (Numerical)",
         hue="Num. Samples per Iteration",
         hue_norm=matplotlib.colors.LogNorm(),
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
-        kind="line",
+        row="Task",
         facet_kws={"sharey": True, "sharex": True, "margin_titles": True},
         palette="cool",
         # palette="mako_r",
@@ -86,6 +91,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     )
     g.set_titles(
         col_template="{col_name}",
+        row_template="{row_name}",
     )
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
     src.plot.save_plot_with_multiple_extensions(
@@ -97,13 +103,14 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     plt.close()
     g = sns.relplot(
         data=run_histories_data_dim_df,
+        kind="line",
         x="Model-Fitting Iteration",
         y="Trace of Fit Cov / Trace of Init Cov (Numerical)",
         hue="Num. Samples per Iteration",
         hue_norm=matplotlib.colors.LogNorm(),
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
-        kind="line",
+        row="Task",
         facet_kws={"sharey": True, "sharex": True, "margin_titles": True},
         palette="cool",
         # palette="mako_r",
@@ -112,6 +119,7 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     g.set_axis_labels("Model-Fitting Iteration", r"$Tr(\hat{\Sigma}_n) / Tr(\Sigma_0)$")
     g.set_titles(
         col_template="{col_name}",
+        row_template="{row_name}",
     )
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
     src.plot.save_plot_with_multiple_extensions(

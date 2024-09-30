@@ -88,6 +88,9 @@ runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
     }
 )
 
+# Only plot "Dataset" == "Swiss Roll" for now.
+runs_configs_df = runs_configs_df[runs_configs_df["Dataset"] == "Swiss Roll"]
+
 
 run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
     wandb_project_path="rerevisiting-model-collapse-fit-kdes",
@@ -96,6 +99,8 @@ run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histori
     refresh=refresh,
     wandb_username=wandb.api.default_entity,
 )
+
+run_histories_df["Task"] = "Kernel Density Estimation"
 
 run_histories_df = run_histories_df.rename(
     columns={"Mean Negative Log Prob (Test)": "Eval NLL on Real Data"}
@@ -124,8 +129,7 @@ g = sns.relplot(
     y="Eval NLL on Real Data",
     col="Setting",
     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
-    row="Dataset",
-    row_order=["Blobs", "Circles", "Moons", "Swiss Roll"],
+    row="Task",
     hue="Num. Samples per Iteration",
     hue_norm=matplotlib.colors.LogNorm(),
     style="Kernel",
@@ -138,7 +142,7 @@ g = sns.relplot(
 g.set(yscale="log")
 g.set_titles(
     col_template="{col_name}",
-    row_template="Dataset: {row_name}",
+    row_template="{row_name}",
 )
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
@@ -158,8 +162,7 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
         y="Eval NLL on Real Data",
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
-        row="Dataset",
-        row_order=["Blobs", "Circles", "Moons", "Swiss Roll"],
+        row="Task",
         hue="Num. Samples per Iteration",
         hue_norm=matplotlib.colors.LogNorm(),
         style="Kernel",
@@ -172,7 +175,7 @@ for bandwidth, bandwidth_group_df in extended_run_histories_df.groupby(
     g.set(yscale="log")
     g.set_titles(
         col_template="{col_name}",
-        row_template="Dataset: {row_name}",
+        row_template="{row_name}",
     )
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
     src.plot.save_plot_with_multiple_extensions(
