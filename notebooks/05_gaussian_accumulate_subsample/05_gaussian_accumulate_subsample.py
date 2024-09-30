@@ -121,4 +121,4 @@ for (data_dim,), run_histories_data_dim_df in run_histories_df.groupby(
     # plt.show()
 
 
-print("Finished running 00_gaussian_fitting.py")
+print("Finished running 05_gaussian_accumulate_subsample.py")
