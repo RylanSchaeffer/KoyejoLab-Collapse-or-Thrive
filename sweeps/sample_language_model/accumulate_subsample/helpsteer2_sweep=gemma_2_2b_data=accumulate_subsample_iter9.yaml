@@ -1,6 +1,6 @@
 program: src/sample_language_model/sample_language_model.py
 entity: rylan
-project: ft_collapse
+project: rerevisiting-model-collapse-sampling
 method: grid
 parameters:
   max_seq_length:
