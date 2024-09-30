@@ -115,11 +115,12 @@ DEFAULT_SUPERVISED_FINETUNING_CONFIG = {
     "data_config": {
         # "dataset": "Anthropic/hh-rlhf",
         # "dataset": "HuggingFaceH4/ultrafeedback_binarized",
-        "dataset": "nvidia/HelpSteer2",
-        # "dataset": "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsd0_iter1_temp1.0_max_seq_len512",
+        # "dataset": "nvidia/HelpSteer2",
+        "dataset": "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX_temp1_max_seq_len512",
         # "dataset": "roneneldan/TinyStories",
         # "dataset": "RylanSchaeffer/collapse_gemma-2-2b_hs2_sftsdXXX_iter1_temp1.0_max_seq_len512",
-        "fraction": 1.0,
+        "fraction": 0.5,
+        # "fraction": 1.0,
         "shuffle_seed": 0,
     },
     "model_config": {

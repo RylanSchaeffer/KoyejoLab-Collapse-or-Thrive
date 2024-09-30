@@ -1,12 +1,12 @@
 program: src/sft_language_model/sft_language_model.py
-entity: jkazdan
-project: revisiting_collapse
+entity: rylan
+project: ft_collapse
 method: grid
 parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "jkazdan/collapse_gemma-2-2b_hs2_replace_iter3_sftsdXXX_temp1_max_seq_len512" ]
+        values: [ "nvidia/HelpSteer2" ]
       fraction:
         values: [ 1.0 ]
       shuffle_seed:
@@ -17,14 +17,14 @@ parameters:
         values: [ "eager" ]
       device_map:
         values: [ "auto" ]
-      final_model_name_or_path:
-        values: [ "jkazdan/collapse_gemma-2-2b_hs2_replace_iter4_sftsdXXX" ]
       initial_model_name_or_path:
         values: [ "google/gemma-2-2b" ]
+      final_model_name_or_path:
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX" ]
       torch_dtype:
         values: [ "bfloat16" ]
   paradigm:
-    values: [ "Replace" ]
+    values: [ "Accumulate" ]
   sft_trainer_config:
     parameters:
       data_seed:

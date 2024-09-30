@@ -7,8 +7,8 @@ import src.analyze
 import src.plot
 
 
-refresh = False
-# refresh = True
+# refresh = False
+refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -24,6 +24,7 @@ wandb_sweep_ids = [
     "3a7l9hl6",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration4
     "zmpfqtvj",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration5
     "j9y6fl6a",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration6
+    "8ewj0gxn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration7
 ]
 
 
@@ -57,7 +58,7 @@ g = sns.relplot(
     kind="line",
     x="Model Fitting Iteration",
     y="eval/loss",
-    col="Setting",
+    col="paradigm",
     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
     marker="o",
     markersize=15,
