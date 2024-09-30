@@ -11,8 +11,6 @@ parameters:
         values: [ 1.0 ]
       shuffle_seed:
         values: [0]
-      setting:
-        values: ["replace"]
   model_config:
     parameters:
       attn_implementation:
