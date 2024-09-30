@@ -14,9 +14,9 @@ parameters:
       setting:
         values: ["replace"]
       num_real:
-        values: [ 10, 100, 1000 ]
+        values: [ 256, 2500, 10000, 20000, 40000, 80000 ]
       num_synthetic:
-        values: [ 0, 2500, 5000, 10000, 20000, 40000, 80000 ]
+        values: [ 256, 2500, 10000, 20000, 40000, 80000 ]
   model_config:
     parameters:
       attn_implementation:
