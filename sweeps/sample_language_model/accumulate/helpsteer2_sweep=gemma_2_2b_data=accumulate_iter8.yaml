@@ -1,5 +1,5 @@
 program: src/sample_language_model/sample_language_model.py
-entity: jkazdan
+entity: rylan
 project: ft_collapse
 method: grid
 parameters:
@@ -7,12 +7,9 @@ parameters:
     values: [ 512 ]
   model_name_or_path:
     values: [
-      "jkazdan/collapse_gemma-2-2b_hs2_accumulate_iter8_sftsd0",
-      "jkazdan/collapse_gemma-2-2b_hs2_accumulate_iter8_sftsd1",
-      "jkazdan/collapse_gemma-2-2b_hs2_accumulate_iter8_sftsd2",
-      # "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter5_sftsd0",
-      # "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter5_sftsd1",
-      # "RylanSchaeffer/collapse_gemma-2-2b_hs2_iter5_sftsd2",
+      "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter8_sftsd0",
+      "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter8_sftsd1",
+      "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter8_sftsd2",
     ]
   num_samples_per_prompt:
     values: [ 64 ]
@@ -21,4 +18,4 @@ parameters:
   temperature:
     values: [1.0]
   total_num_samples:
-    values: [20324]
+    values: [12531]

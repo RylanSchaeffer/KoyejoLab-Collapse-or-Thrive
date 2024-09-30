@@ -1,3 +1,4 @@
+import matplotlib.colors
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
@@ -7,8 +8,8 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
-refresh = True
+refresh = False
+# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -45,10 +46,18 @@ runs_configs_df = src.analyze.extract_key_value_from_df_col(
     new_col_name="dataset",
 )
 
+runs_configs_df = runs_configs_df.rename(
+    columns={
+        "num_samples_per_iteration": "Num. Samples per Iteration",
+    }
+)
+
 # Add the number of model fitting iterations.
 runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
     src.analyze.determine_model_fitting_iteration_from_datasets_str
 )
+
+# TODO: Determine the number of samples per iteration.
 
 runs_configs_df["Task"] = "SFT of LMs"
 
@@ -60,6 +69,10 @@ g = sns.relplot(
     y="eval/loss",
     col="paradigm",
     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
+    palette="cool",
+    legend="full",
+    # hue="Num. Samples per Iteration",
+    # hue_norm=matplotlib.colors.LogNorm(),
     marker="o",
     markersize=15,
 )
