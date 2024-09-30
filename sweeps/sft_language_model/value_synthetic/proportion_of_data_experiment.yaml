@@ -79,7 +79,7 @@ parameters:
         values: [ wandb ]
       torch_compile:
         values: [ True ]
-      warmup_ratio:
-        values: [ 0.05 ]
+      warmup_steps:
+        values: [ 16 ]
   seed:
     values: [0, 1, 2]
