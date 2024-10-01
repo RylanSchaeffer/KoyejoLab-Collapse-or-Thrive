@@ -15,8 +15,9 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
 refresh = False
+# refresh = True
+
 WANDB_PROJ = "heatmap3"
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
