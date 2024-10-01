@@ -1,6 +1,6 @@
 # Adapted from https://github.com/huggingface/trl/blob/main/examples/scripts/reward_modeling.py
 import os
-
+#leave for rylan to check
 # Rok asked us to include the following specifications in our code to prevent CPUs from spinning idly:
 n_threads_str = "4"
 os.environ["OMP_NUM_THREADS"] = n_threads_str
@@ -137,7 +137,7 @@ def train_supervised_finetuning():
         save_strategy=sft_trainer_config_dict["save_strategy"],
         save_total_limit=sft_trainer_config_dict["save_total_limit"],
         seed=wandb_config["seed"],
-        warmup_ratio=sft_trainer_config_dict["warmup_ratio"],
+        warmup_steps=sft_trainer_config_dict["warmup_steps"],
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
