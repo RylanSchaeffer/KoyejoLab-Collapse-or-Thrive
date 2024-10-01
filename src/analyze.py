@@ -66,8 +66,12 @@ def download_wandb_project_runs_configs(
     filetype: str = "csv",
 ) -> pd.DataFrame:
     assert filetype in {"csv", "feather", "parquet"}
+
+    # Hash because otherwise too long.
+    filename = "sweeps=" + ",".join(sweep_ids)
+    hashed_filename = hashlib.md5(filename.encode()).hexdigest()
     runs_configs_df_path = os.path.join(
-        data_dir, "sweeps=" + ",".join(sweep_ids) + f"_runs_configs.{filetype}"
+        data_dir, hashed_filename + f"_runs_configs.{filetype}"
     )
     if refresh or not os.path.isfile(runs_configs_df_path):
         # Download sweep results
@@ -173,8 +177,11 @@ def download_wandb_project_runs_histories(
 ) -> pd.DataFrame:
     assert filetype in {"csv", "feather", "parquet"}
 
+    # Hash because otherwise too long.
+    filename = "sweeps=" + ",".join(sweep_ids)
+    hashed_filename = hashlib.md5(filename.encode()).hexdigest()
     runs_histories_df_path = os.path.join(
-        data_dir, "sweeps=" + ",".join(sweep_ids) + f"_runs_histories.{filetype}"
+        data_dir, hashed_filename + f"_runs_histories.{filetype}"
     )
     if refresh or not os.path.isfile(runs_histories_df_path):
         # Download sweep results

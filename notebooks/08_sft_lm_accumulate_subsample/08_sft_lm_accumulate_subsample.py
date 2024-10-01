@@ -8,8 +8,8 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
-refresh = True
+refresh = False
+# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -24,6 +24,7 @@ wandb_sweep_ids = [
     "akm93fto",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration4
     "v8kta96l",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration5
     "bygiyqhg",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration6
+    "ds1ukfox",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration7
     "y4oue58c",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 1)
     "3cn97hta",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 2)
     "4ec1abqn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration2
@@ -43,6 +44,8 @@ wandb_sweep_ids = [
     "rk8y6anj",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration4
     "giodjp03",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration5
     "ugblwb61",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration6
+    "qias2rm1",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration7
+    "70nfygoq",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration8
 ]
 
 
@@ -76,7 +79,7 @@ runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
 
 runs_configs_df["Num. Samples per Iteration"] = 12500
 
-runs_configs_df["Task"] = "SFT Language Models"
+runs_configs_df["Task"] = "Finetune Language Model"
 
 plt.close()
 g = sns.relplot(
