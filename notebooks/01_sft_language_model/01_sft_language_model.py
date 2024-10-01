@@ -15,39 +15,32 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
     refresh=refresh,
 )
 
-wandb_username = "jkazdan"
+wandb_username = "rylan"
 wandb_sweep_ids = [
-    "q3vd9gyn",  # HelpSteer2   Gemma2-2B   Data=Original   Iteration1
-    "2cvqmk2v",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
-    "wtr77bli",
-    "6s09ojgi",
-    "8ha71vqm",
-    "nqd2zmqg",
-    "63o3uyjm",
-    "utw2dy7b",
-    "xqjudpc0",
-    "2z9f726i",
-    "3ryjlwpj",
-    "no35bjlm",
-    "hjshv3r0",
-    "nxzbezmg",
-    "oqr34ktf",
-    "zc52fldc",
-    "tph8nlpx",
-    "ccac0yx5",
-    "r32e7rwu",
+    "tb6c1gtr",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration1
+    "ct9m8x0l",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration2
+    "p7hjia80",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration3
+    "akm93fto",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration4
+    "v8kta96l",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration5
+    "bygiyqhg",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration6
+    "ds1ukfox",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration7
+    "vwu954ge",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration8
+    "7w4kg2jm",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration9
+    "n2ren5e9",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration1
+    "5i6bj5re",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration2
+    "n8t9j5ee",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration3
+    "rk8y6anj",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration4
+    "giodjp03",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration5
+    "ugblwb61",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration6
+    "qias2rm1",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration7
+    "70nfygoq",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration8
+    "3fd19zjs",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration9
+    "hnk0v7gf",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration10
+    "npee6k44",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration11
+    "8kqsqkug",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration12
+    "mgjv0w71",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration13
 ]
-# for the accumulate data
-# wandb_sweep_ids = [
-#     "q3vd9gyn",  # HelpSteer2   Gemma2-2B   Data=Original   Iteration1
-#     "3ryjlwpj",  # HelpSteer2   Gemma2-2B   Data=Replace    Iteration2
-#     "no35bjlm",
-#     "hjshv3r0",
-#     "nxzbezmg",
-#     "oqr34ktf",
-#     "nqd2zmqg",
-#     "tph8nlpx"
-# ]
+
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     wandb_project_path="ft_collapse",
     data_dir=data_dir,
@@ -69,24 +62,8 @@ runs_configs_df = src.analyze.extract_key_value_from_df_col(
 runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
     src.analyze.determine_model_fitting_iteration_from_datasets_str
 )
-runs_configs_df["Setting"] = runs_configs_df["dataset"].apply(
-    src.analyze.determine_setting_from_datasets_str
-)
 
-runs_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
-    wandb_project_path="ft_collapse",
-    data_dir=data_dir,
-    sweep_ids=wandb_sweep_ids,
-    refresh=refresh,
-    wandb_username=wandb_username,
-    wandb_run_history_samples=100000000,  # Make sure we grab _all_ the data.
-)
-
-runs_configs_df, runs_histories_df = src.analyze.duplicate_real_data_runs(
-    runs_configs_df=runs_configs_df,
-    runs_histories_df=runs_histories_df,
-)
-
+runs_configs_df["Num. Samples per Iteration"] = 12500
 
 plt.close()
 g = sns.relplot(
@@ -94,64 +71,49 @@ g = sns.relplot(
     kind="line",
     x="Model Fitting Iteration",
     y="eval/loss",
-    col="Setting",
+    col="paradigm",
     col_order=["Replace", "Accumulate"],
+    hue="Num. Samples per Iteration",
+    palette="cool",
+    legend="full",
     marker="o",
     markersize=15,
 )
-g.set_axis_labels(y_var="Eval Cross Entropy on Real Data", fontsize=20)
+g.set(xlim=(0.5, 10.5))
+g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
 g.set_titles(col_template="{col_name}")
+sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="y=eval_loss_x=model_fitting_iteration_col=setting",
 )
 # plt.show()
 
-extended_run_histories_df = runs_histories_df.merge(
-    runs_configs_df[["run_id", "Model Fitting Iteration"]],
-    left_on="run_id",
-    right_on="run_id",
-)
-
-
-plt.close()
-g = sns.relplot(
-    data=extended_run_histories_df,
-    kind="line",
-    x="train/epoch",
-    y="eval/loss",
-    col="Setting",
-    hue="Model Fitting Iteration",
-)
-g.set_yticklabels(fontsize=10)
-g.set_axis_labels("Epoch", "Eval Cross Entropy on Real Data")
-g.set_titles("{col_name}")
-sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
-src.plot.save_plot_with_multiple_extensions(
-    plot_dir=results_dir,
-    plot_filename="y=eval_loss_x=epoch_col=setting_hue=model_fitting_iteration",
-)
-# plt.show()
-
-# Visualize each individual run's learning curve.
-runs_learning_curves_dir = os.path.join(results_dir, "learning_curves_per_run")
-os.makedirs(runs_learning_curves_dir, exist_ok=True)
-for run_id, run_history_df in extended_run_histories_df.groupby("run_id"):
-    # extended_run_histories_df.loc[
-    #     run_history_df.index, "eval/loss_smoothed"
-    # ] = run_history_df["eval/loss"].rolling(window=10).mean()
-    plt.close()
-    sns.lineplot(
-        data=run_history_df,
-        x="train/epoch",
-        y="eval/loss",
-    )
-    plt.title(f"Run ID: {run_id}")
-    src.plot.save_plot_with_multiple_extensions(
-        plot_dir=runs_learning_curves_dir,
-        plot_filename=f"y=eval_loss_x=epoch_run_id={run_id}",
-    )
-    # plt.show()
+# extended_run_histories_df = runs_histories_df.merge(
+#     runs_configs_df[["run_id", "Model Fitting Iteration"]],
+#     left_on="run_id",
+#     right_on="run_id",
+# )
+#
+#
+# plt.close()
+# g = sns.relplot(
+#     data=extended_run_histories_df,
+#     kind="line",
+#     x="train/epoch",
+#     y="eval/loss",
+#     col="Setting",
+#     hue="Model Fitting Iteration",
+# )
+# g.set_yticklabels(fontsize=10)
+# g.set_axis_labels("Epoch", "Eval Cross Entropy on Real Data")
+# g.set_titles("{col_name}")
+# sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
+# src.plot.save_plot_with_multiple_extensions(
+#     plot_dir=results_dir,
+#     plot_filename="y=eval_loss_x=epoch_col=setting_hue=model_fitting_iteration",
+# )
+# # plt.show()
 
 
 print("Finished running notebooks/01_sft_language_model.py")
