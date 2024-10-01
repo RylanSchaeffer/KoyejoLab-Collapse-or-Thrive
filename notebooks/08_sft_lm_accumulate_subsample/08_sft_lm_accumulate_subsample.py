@@ -8,8 +8,8 @@ import src.analyze
 import src.plot
 
 
-refresh = False
-# refresh = True
+# refresh = False
+refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -20,6 +20,7 @@ wandb_username = "rylan"
 wandb_sweep_ids = [
     "tb6c1gtr",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration1
     "ct9m8x0l",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration2
+    "p7hjia80",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration3
     "y4oue58c",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 1)
     "3cn97hta",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 2)
     "4ec1abqn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration2
@@ -31,6 +32,7 @@ wandb_sweep_ids = [
     "y7gsymxb",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration8
     "n2ren5e9",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration1
     "5i6bj5re",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration2
+    "n8t9j5ee",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration3
 ]
 
 
