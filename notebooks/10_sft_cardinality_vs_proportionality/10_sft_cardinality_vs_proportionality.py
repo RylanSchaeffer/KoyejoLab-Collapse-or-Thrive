@@ -22,13 +22,12 @@ WANDB_PROJ = "heatmap3"
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
-    refresh=refresh,
+    refresh=False,
 )
 
 wandb_username = "jkazdan"
-sweeps = wandb.Api().project(WANDB_PROJ).sweeps()
-sweep_names = ["pqcd6apc"]  # [sweep.id for sweep in sweeps]
-wandb_sweep_ids = sweep_names
+# sweeps = wandb.Api().project(WANDB_PROJ).sweeps()
+wandb_sweep_ids = ["pqcd6apc"]  # [sweep.id for sweep in sweeps]
 
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
