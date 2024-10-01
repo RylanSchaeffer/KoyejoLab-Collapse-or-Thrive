@@ -21,6 +21,7 @@ wandb_sweep_ids = [
     "tb6c1gtr",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration1
     "ct9m8x0l",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration2
     "p7hjia80",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration3
+    "akm93fto",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration4
     "y4oue58c",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 1)
     "3cn97hta",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 2)
     "4ec1abqn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration2
@@ -30,9 +31,13 @@ wandb_sweep_ids = [
     "j9y6fl6a",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration6
     "8ewj0gxn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration7
     "y7gsymxb",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration8
+    "qfznvxk6",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration9
+    "legapmou",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration10
     "n2ren5e9",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration1
     "5i6bj5re",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration2
     "n8t9j5ee",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration3
+    "rk8y6anj",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration4
+    "giodjp03",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration5
 ]
 
 

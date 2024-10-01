@@ -6,7 +6,7 @@ parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_replace_iter7_sftsdXXX_temp1.0_max_seq_len512" ]
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_replace_iter7_sftsdXXX_temp1_max_seq_len512" ]
       fraction:
         values: [ 1.0 ]
       shuffle_seed:

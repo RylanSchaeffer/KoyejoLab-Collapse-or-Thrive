@@ -6,9 +6,9 @@ parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter1_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter2_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter3_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter4_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter5_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter6_sftsdXXX_temp1_max_seq_len512" ]
+        values: [ "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter2_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter3_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter4_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter5_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter6_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter7_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter8_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter9_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter10_sftsdXXX_temp1_max_seq_len512,helpsteer2_sweep=gemma_2_2b_data=accumulatesubsample_iter11.yaml,helpsteer2_sweep=gemma_2_2b_data=accumulatesubsample_iter12.yaml" ]
       fraction:
-        values: [ 1.0 ]
+        values: [ 0.07692307692   ]
       shuffle_seed:
         values: [0]
   model_config:
@@ -18,13 +18,13 @@ parameters:
       device_map:
         values: [ "auto" ]
       final_model_name_or_path:
-        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulate_iter7_sftsdXXX" ]
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter12_sftsdXXX" ]
       initial_model_name_or_path:
         values: [ "google/gemma-2-2b" ]
       torch_dtype:
         values: [ "bfloat16" ]
   paradigm:
-    values: [ "Accumulate" ]
+    values: [ "Accumulate-Subsample" ]
   sft_trainer_config:
     parameters:
       data_seed:
