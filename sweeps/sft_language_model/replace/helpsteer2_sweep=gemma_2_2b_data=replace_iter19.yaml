@@ -1,0 +1,81 @@
+program: src/sft_language_model/sft_language_model.py
+entity: rylan
+project: ft_collapse
+method: grid
+parameters:
+  data_config:
+    parameters:
+      dataset:
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_replace_iter18_sftsdXXX_temp1_max_seq_len512" ]
+      fraction:
+        values: [ 1.0 ]
+      shuffle_seed:
+        values: [0]
+  model_config:
+    parameters:
+      attn_implementation:
+        values: [ "eager" ]
+      device_map:
+        values: [ "auto" ]
+      final_model_name_or_path:
+        values: [ "RylanSchaeffer/collapse_gemma-2-2b_hs2_replace_iter19_sftsdXXX" ]
+      initial_model_name_or_path:
+        values: [ "google/gemma-2-2b" ]
+      torch_dtype:
+        values: [ "bfloat16" ]
+  paradigm:
+    values: [ "Replace" ]
+  sft_trainer_config:
+    parameters:
+      data_seed:
+        values: [ 0 ]
+      dataloader_drop_last:
+        values: [ True ]
+      dataloader_num_workers:
+        values: [ 4 ]
+      dataloader_prefetch_factor:
+        values: [ 4 ]
+      eval_on_start:
+        values: [ True ]
+      eval_strategy:
+        values: [ steps ]
+      eval_steps:
+        values: [ 5 ]
+      gradient_accumulation_steps:
+        values: [ 16 ]
+      gradient_checkpointing:
+        values: [ False ]
+      learning_rate:
+        values: [ 8e-6 ]
+      logging_steps:
+        values: [ 1 ]
+      lr_scheduler_type:
+        values: [ "constant_with_warmup" ]
+      max_grad_norm:
+        values: [ 1.0 ]
+      max_seq_length:
+        values: [ 512 ]
+      max_steps:
+        values: [ -1 ]
+      num_train_epochs:
+        values: [ 1 ]
+      optim:
+        values: [ "adamw_torch" ]
+      per_device_eval_batch_size:
+        values: [ 16 ]
+      per_device_train_batch_size:
+        values: [ 8 ]
+      remove_unused_columns:
+        values: [ True ]
+      save_strategy:
+        values: [ "no" ]
+      save_total_limit:
+        values: [ 0 ]
+      report_to:
+        values: [ wandb ]
+      torch_compile:
+        values: [ True ]
+      warmup_ratio:
+        values: [ 0.05 ]
+  seed:
+    values: [0, 1, 2]
