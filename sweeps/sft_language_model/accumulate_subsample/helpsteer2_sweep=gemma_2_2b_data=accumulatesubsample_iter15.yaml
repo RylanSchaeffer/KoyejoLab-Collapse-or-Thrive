@@ -8,7 +8,7 @@ parameters:
       dataset:
         values: [ "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter2_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter3_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter4_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter5_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter6_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter7_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter8_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter9_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter10_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter11_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter12_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter13_sftsdXXX_temp1_max_seq_len512,RylanSchaeffer/collapse_gemma-2-2b_hs2_accumulatesubsample_iter14_sftsdXXX_temp1_max_seq_len512" ]
       fraction:
-        values: [ 0.07692307692   ]
+        values: [ 0.06666666666   ]
       shuffle_seed:
         values: [0]
   model_config:
