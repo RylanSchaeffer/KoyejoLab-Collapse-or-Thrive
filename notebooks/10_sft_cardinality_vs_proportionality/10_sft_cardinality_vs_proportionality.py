@@ -5,8 +5,6 @@ import os
 import pandas as pd
 import scipy.stats
 import seaborn as sns
-import wandb
-import ast
 import statsmodels.api as sm
 from matplotlib.colors import LogNorm
 from sklearn.metrics import r2_score
@@ -18,20 +16,17 @@ import src.plot
 refresh = False
 # refresh = True
 
-WANDB_PROJ = "heatmap3"
-
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
     refresh=False,
 )
 
 wandb_username = "jkazdan"
-# sweeps = wandb.Api().project(WANDB_PROJ).sweeps()
-wandb_sweep_ids = ["pqcd6apc"]  # [sweep.id for sweep in sweeps]
+wandb_sweep_ids = ["pqcd6apc"]
 
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
-    wandb_project_path=WANDB_PROJ,
+    wandb_project_path="heatmap3",
     data_dir=data_dir,
     sweep_ids=wandb_sweep_ids,
     refresh=refresh,
@@ -61,7 +56,7 @@ runs_configs_df = src.analyze.extract_key_value_from_df_col(
 )
 
 runs_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
-    wandb_project_path=WANDB_PROJ,
+    wandb_project_path="heatmap3",
     data_dir=data_dir,
     sweep_ids=wandb_sweep_ids,
     refresh=refresh,
@@ -75,10 +70,9 @@ runs_histories_df["Setting"] = "Mixture"
 
 
 # loss v. number of real datapoints
-print(runs_configs_df)
 plt.close()
 g = sns.relplot(
-    data=runs_configs_df,
+    data=runs_configs_df[runs_configs_df["num_real"] > 0],
     kind="line",
     x="num_real",
     y="eval/loss",
@@ -88,21 +82,38 @@ g = sns.relplot(
     marker="o",
     markersize=7,
     palette="coolwarm",
+    legend="full",
 )
-g.set(xscale="symlog", yscale="log")
+# Add dashed horizontal lines of the loss for each "num_synthetic" where "num_real" = 0.
+# Extract the color palette
+palette = sns.color_palette(
+    "coolwarm", n_colors=len(runs_configs_df["num_synthetic"].unique())
+)
+color_dict = dict(zip(sorted(runs_configs_df["num_synthetic"].unique()), palette))
+for num_synthetic in runs_configs_df["num_synthetic"].unique():
+    loss = runs_configs_df[
+        (runs_configs_df["num_real"] == 0)
+        & (runs_configs_df["num_synthetic"] == num_synthetic)
+    ]["eval/loss"].values[0]
+    plt.axhline(
+        y=loss,
+        linestyle="--",
+        color=color_dict[num_synthetic],  # Use the corresponding color
+        zorder=1,
+    )
+g.set(xlim=(2e2, 1.5e4), xscale="symlog", yscale="log")
 g.set_axis_labels(
-    x_var="Real Data Points", y_var="Eval Cross Entropy on Real Data", fontsize=20
+    x_var="Real Data Points", y_var="Cross Entropy on Real Data (Test)", fontsize=20
 )
-g.set(xlim=(-1, 3e4))
 legend = g.legend
 legend.set_title("Num. Synthetic Datapoints")
-
 sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="heatmap_validation_loss",
 )
 plt.show()
+
 
 # num synthetic v. number of real datapoints
 plt.close()
