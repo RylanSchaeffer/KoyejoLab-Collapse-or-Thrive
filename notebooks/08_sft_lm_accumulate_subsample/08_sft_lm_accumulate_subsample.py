@@ -28,6 +28,7 @@ wandb_sweep_ids = [
     "vwu954ge",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration8
     "7w4kg2jm",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration9
     "8rfj4fko",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration10
+    "4g4lhm1m",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration11
     "y4oue58c",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 1)
     "3cn97hta",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 2)
     "4ec1abqn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration2
@@ -47,6 +48,8 @@ wandb_sweep_ids = [
     "utz5iwds",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration16
     "sapn8lgb",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration17
     "izionzhj",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration18
+    "hoiqa3rj",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration19
+    "xf0tx193",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration20
     "n2ren5e9",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration1
     "5i6bj5re",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration2
     "n8t9j5ee",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration3
@@ -62,6 +65,10 @@ wandb_sweep_ids = [
     "mgjv0w71",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration13
     "2ko06q37",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration14
     "q3dogobf",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration15
+    "dhyswzyh",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration16
+    "x1b5cabr",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration17
+    "i348nela",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration18
+    "pfvkcnlx",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration19
 ]
 
 

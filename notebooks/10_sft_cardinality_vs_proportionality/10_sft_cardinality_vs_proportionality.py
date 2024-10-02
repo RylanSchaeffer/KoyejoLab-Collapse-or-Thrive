@@ -6,7 +6,7 @@ import pandas as pd
 import scipy.stats
 import seaborn as sns
 import statsmodels.api as sm
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LogNorm, SymLogNorm
 from sklearn.metrics import r2_score
 
 import src.analyze
@@ -22,7 +22,11 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 )
 
 wandb_username = "jkazdan"
-wandb_sweep_ids = ["pqcd6apc"]
+wandb_sweep_ids = [
+    "pqcd6apc",
+    "jj3km0np",
+    "7s2ut03h",
+]
 
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
@@ -77,7 +81,7 @@ g = sns.relplot(
     x="num_real",
     y="eval/loss",
     hue="num_synthetic",
-    hue_norm=LogNorm(),
+    hue_norm=SymLogNorm(linthresh=1.0),
     col_order=["Replace", "Accumulate"],
     marker="o",
     markersize=7,
@@ -91,10 +95,14 @@ palette = sns.color_palette(
 )
 color_dict = dict(zip(sorted(runs_configs_df["num_synthetic"].unique()), palette))
 for num_synthetic in runs_configs_df["num_synthetic"].unique():
-    loss = runs_configs_df[
-        (runs_configs_df["num_real"] == 0)
-        & (runs_configs_df["num_synthetic"] == num_synthetic)
-    ]["eval/loss"].values[0]
+    try:
+        loss = runs_configs_df[
+            (runs_configs_df["num_real"] == 0)
+            & (runs_configs_df["num_synthetic"] == num_synthetic)
+        ]["eval/loss"].values[0]
+    except IndexError:
+        # TODO: Remove this once sweeps are done running.
+        continue
     plt.axhline(
         y=loss,
         linestyle="--",
@@ -106,7 +114,7 @@ g.set_axis_labels(
     x_var="Real Data Points", y_var="Cross Entropy on Real Data (Test)", fontsize=20
 )
 legend = g.legend
-legend.set_title("Num. Synthetic Datapoints")
+legend.set_title("Num. Synthetic Data")
 sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
@@ -177,24 +185,49 @@ X = runs_configs_df["proportion"]
 model = sm.OLS(y, X).fit()
 print(f"The R^2 value for the absolute number of real on the loss is {model.rsquared}")
 
-runs_configs_df["n_data"] = (
+runs_configs_df["num_data"] = (
     runs_configs_df["num_real"] + runs_configs_df["num_synthetic"]
 )
 
-# eval loss v proportion of real data
+# # eval loss v proportion of real data
+# runs_configs_over_seed_df = (
+#     runs_configs_df[["eval/loss", "num_data", "proportion", "seed"]]
+#     .groupby(
+#         [
+#             "proportion",
+#             "num_data",
+#         ]
+#     )
+#     .mean()
+#     .reset_index()
+# )
+
+runs_configs_df = runs_configs_df.rename(
+    columns={
+        "proportion": "Real Data / (Real Data + Synthetic Data)",
+        "num_data": "Total Num. Data",
+        "num_synthetic": "Num. Synthetic Data",
+        "num_real": "Num. Real Data",
+    }
+)
+
+
 plt.close()
 g = sns.relplot(
     data=runs_configs_df,
     kind="scatter",
-    x="proportion",
+    x="Real Data / (Real Data + Synthetic Data)",
     y="eval/loss",
-    hue="n_data",
-    col_order=["Replace", "Accumulate"],
+    hue="Total Num. Data",
+    hue_norm=LogNorm(),
     marker="o",
-    palette="coolwarm",
+    # palette="coolwarm",
+    palette="copper",
 )
-g.set_axis_labels(y_var="Train Cross Entropy on Real Data", fontsize=20)
-g.set(xlim=(0, 1))
+g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
+g.set(
+    xscale="log",
+)
 sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
@@ -202,4 +235,51 @@ src.plot.save_plot_with_multiple_extensions(
 )
 plt.show()
 
-print("Finished running notebooks/01_sft_language_model.py")
+
+plt.close()
+g = sns.relplot(
+    data=runs_configs_df[runs_configs_df["Num. Real Data"] > 0],
+    kind="line",
+    x="Real Data / (Real Data + Synthetic Data)",
+    y="eval/loss",
+    # style="Total Num. Data",
+    hue_norm=SymLogNorm(linthresh=1.0),
+    hue="Num. Synthetic Data",
+    palette="copper",
+)
+g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
+g.set(
+    xscale="log",
+)
+sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
+src.plot.save_plot_with_multiple_extensions(
+    plot_dir=results_dir,
+    plot_filename="y=cross_entropy_x=proportion_real_hue=num_synthetic",
+)
+plt.show()
+
+
+plt.close()
+g = sns.relplot(
+    data=runs_configs_df[runs_configs_df["Num. Real Data"] > 0],
+    kind="line",
+    x="Real Data / (Real Data + Synthetic Data)",
+    y="eval/loss",
+    # style="Total Num. Data",
+    hue_norm=SymLogNorm(linthresh=1.0),
+    hue="Num. Real Data",
+    palette="copper",
+)
+g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
+g.set(
+    xscale="log",
+)
+sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
+src.plot.save_plot_with_multiple_extensions(
+    plot_dir=results_dir,
+    plot_filename="y=cross_entropy_x=proportion_real_hue=num_real",
+)
+plt.show()
+
+
+print("Finished running notebooks/10_sft_cardinality_vs_proportionality.py")
