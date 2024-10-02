@@ -171,14 +171,17 @@ def train_supervised_finetuning():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
     )
-    trainer.train()
-    print("Finished training. Beginning final evaluation...")
+    if len(train_dataset) > 0:
+        trainer.train()
+        print("Finished training. Beginning final evaluation...")
+    else:
+        print("No training data. Skipping training.")
     metrics = trainer.evaluate()
     trainer.log_metrics(split="eval", metrics=metrics)
     pprint.pprint(metrics)
 
     print(f"Finished final evaluation. Pushing to HuggingFace...")
-    trainer.push_to_hub()
+    # trainer.push_to_hub()
     # trainer.save_model(output_dir=sft_config.output_dir)
     print("Pushed to HuggingFace.")
     wandb.finish()
