@@ -22,7 +22,6 @@ from transformers import AutoTokenizer, set_seed
 from trl import (
     SFTConfig,
     SFTTrainer,
-    get_peft_config,
 )
 from trl.trainer.utils import SIMPLE_QUERY_CHAT_TEMPLATE
 from typing import Any, Dict

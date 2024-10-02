@@ -6,17 +6,19 @@ parameters:
   data_config:
     parameters:
       dataset:
-        values: [ "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_iter1_sftsdXXX_temp1_max_seq_len512" ]
+        values: [
+          "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_valueofsynthetic_iter1_sftsd0_temp1_max_seq_len512",
+          "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_valueofsynthetic_iter1_sftsd1_temp1_max_seq_len512",
+          "nvidia/HelpSteer2,RylanSchaeffer/collapse_gemma-2-2b_hs2_valueofsynthetic_iter1_sftsd2_temp1_max_seq_len512",
+        ]
       fraction:
         values: [ 1.0 ]
       shuffle_seed:
         values: [0]
-      setting:
-        values: ["replace"]
       num_real:
-        values: [ 0, 256, 512, 768, 1024, 1536, 2048, 4096, 8192, 12531 ]
+        values: [ 0, 256, 512, 768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288 ]
       num_synthetic:
-        values: [ 0, 256, 512, 768, 1024, 1536, 2048, 4096, 8192, 16384, 32768, 65536, 131072 ]
+        values: [ 0, 256, 512, 768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576, 32768, 49152, 65536, 98304, 131072 ]
   model_config:
     parameters:
       attn_implementation:
@@ -29,6 +31,8 @@ parameters:
         values: [ "google/gemma-2-2b" ]
       torch_dtype:
         values: [ "bfloat16" ]
+  paradigm:
+    values: [ "ValueOfSynthetic" ]
   sft_trainer_config:
     parameters:
       data_seed:
