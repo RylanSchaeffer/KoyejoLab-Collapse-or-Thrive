@@ -4,7 +4,7 @@ project: rerevisiting-model-collapse-fit-lin-regr
 method: grid
 parameters:
   data_dim:
-    values: [ 10 ]
+    values: [ 100 ]
   num_samples_per_iteration:
     values: [10, 32, 100, 316, 1000]
   num_iterations:
@@ -14,8 +14,6 @@ parameters:
   setting:
     values: [
       "Accumulate",
-      "Accumulate-Subsample",
-      "Replace",
     ]
   sigma_squared:
     values: [

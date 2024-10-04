@@ -3,6 +3,7 @@ import os
 import pprint
 from typing import Any, Dict
 import wandb
+from wandb.integration.kfp.kfp_patch import wandb_log
 
 import src.globals
 import src.data
@@ -46,7 +47,8 @@ def fit_linear_regression():
     for iteration_idx in range(1, wandb_config["num_iterations"] + 1):
         # Fit the linear regression model.
         if setting in {"Accumulate", "Replace"}:
-            w_hat = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ Y_train
+            w_hat = np.linalg.pinv(X_train) @ Y_train
+            # w_hat = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ Y_train
         elif setting in {"Accumulate-Subsample"}:
             # Subsample the total data.
             subsample_idx = np.random.choice(
@@ -56,11 +58,7 @@ def fit_linear_regression():
             )
             X_train_subsample = X_train[subsample_idx]
             Y_train_subsample = Y_train[subsample_idx]
-            w_hat = (
-                np.linalg.inv(X_train_subsample.T @ X_train_subsample)
-                @ X_train_subsample.T
-                @ Y_train_subsample
-            )
+            w_hat = np.linalg.pinv(X_train_subsample) @ Y_train_subsample
         else:
             raise ValueError(f"Unknown setting: {setting}")
 
