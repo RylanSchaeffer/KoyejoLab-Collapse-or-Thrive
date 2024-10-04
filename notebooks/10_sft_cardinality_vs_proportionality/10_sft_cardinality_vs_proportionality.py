@@ -21,16 +21,20 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
     refresh=False,
 )
 
-wandb_username = "jkazdan"
-wandb_sweep_ids = [
-    "pqcd6apc",
-    "jj3km0np",
-    "7s2ut03h",
-]
+# wandb_username = "jkazdan"
+# wandb_sweep_ids = [
+#     "pqcd6apc",
+#     "jj3km0np",
+#     "7s2ut03h",
+# ]
+# wandb_project_path = "heatmap3"
 
+wandb_username = "rylan"
+wandb_sweep_ids = ["nbiswnvi"]
+wandb_project_path = "model-collapse-value-synthetic"
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
-    wandb_project_path="heatmap3",
+    wandb_project_path=wandb_project_path,
     data_dir=data_dir,
     sweep_ids=wandb_sweep_ids,
     refresh=refresh,
@@ -60,7 +64,7 @@ runs_configs_df = src.analyze.extract_key_value_from_df_col(
 )
 
 runs_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
-    wandb_project_path="heatmap3",
+    wandb_project_path=wandb_project_path,
     data_dir=data_dir,
     sweep_ids=wandb_sweep_ids,
     refresh=refresh,
@@ -68,9 +72,78 @@ runs_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histor
     wandb_run_history_samples=100000000,  # Make sure we grab _all_ the data.
 )
 
+extended_runs_histories_df = runs_histories_df.merge(
+    runs_configs_df[["run_id", "num_real", "num_synthetic", "seed", "dataset"]],
+    on="run_id",
+    how="inner",
+)
+
 
 runs_configs_df["Setting"] = "Mixture"
 runs_histories_df["Setting"] = "Mixture"
+
+plt.close()
+g = sns.relplot(
+    data=runs_configs_df,
+    # data=runs_configs_df[runs_configs_df["num_real"] > 0],
+    kind="line",
+    x="num_real",
+    y="eval/loss",
+    hue="num_synthetic",
+    hue_norm=LogNorm(),
+    col="num_synthetic",
+    col_wrap=4,
+    marker="o",
+    markersize=7,
+    # palette="coolwarm",
+    palette="Spectral_r",
+    legend="full",
+)
+g.set(xlim=(2e2, 1.5e4), xscale="symlog", yscale="log")
+g.set_axis_labels(
+    x_var="Num. Real Data", y_var="Cross Entropy on Real Data (Test)", fontsize=20
+)
+g.set_titles(col_template="{col_name} Synthetic Data")
+legend = g.legend
+legend.set_title("Num. Synthetic Data")
+sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
+src.plot.save_plot_with_multiple_extensions(
+    plot_dir=results_dir,
+    plot_filename="y=cross_entropy_x=num_real_hue=num_synthetic_col=num_synthetic",
+)
+plt.show()
+
+
+plt.close()
+g = sns.relplot(
+    data=runs_configs_df,
+    # data=runs_configs_df[runs_configs_df["num_real"] > 0],
+    kind="line",
+    x="num_synthetic",
+    y="eval/loss",
+    hue="num_real",
+    hue_norm=LogNorm(),
+    col="num_real",
+    col_wrap=4,
+    marker="o",
+    markersize=15,
+    # palette="coolwarm",
+    palette="Spectral_r",
+    legend="full",
+)
+g.set(xlim=(2e2, 1.5e4), xscale="symlog", yscale="log")
+g.set_axis_labels(
+    x_var="Num. Synthetic Data", y_var="Cross Entropy on Real Data (Test)", fontsize=20
+)
+g.set_titles(col_template="{col_name} Real Data")
+legend = g.legend
+legend.set_title("Num. Real Data")
+sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
+src.plot.save_plot_with_multiple_extensions(
+    plot_dir=results_dir,
+    plot_filename="y=cross_entropy_x=num_synthetic_hue=num_real_col=num_real",
+)
+plt.show()
 
 
 # loss v. number of real datapoints
@@ -81,34 +154,35 @@ g = sns.relplot(
     x="num_real",
     y="eval/loss",
     hue="num_synthetic",
-    hue_norm=SymLogNorm(linthresh=1.0),
+    # hue_norm=SymLogNorm(linthresh=1.0),
     col_order=["Replace", "Accumulate"],
     marker="o",
     markersize=7,
-    palette="coolwarm",
+    # palette="coolwarm",
+    palette="Spectral_r",
     legend="full",
 )
-# Add dashed horizontal lines of the loss for each "num_synthetic" where "num_real" = 0.
-# Extract the color palette
-palette = sns.color_palette(
-    "coolwarm", n_colors=len(runs_configs_df["num_synthetic"].unique())
-)
-color_dict = dict(zip(sorted(runs_configs_df["num_synthetic"].unique()), palette))
-for num_synthetic in runs_configs_df["num_synthetic"].unique():
-    try:
-        loss = runs_configs_df[
-            (runs_configs_df["num_real"] == 0)
-            & (runs_configs_df["num_synthetic"] == num_synthetic)
-        ]["eval/loss"].values[0]
-    except IndexError:
-        # TODO: Remove this once sweeps are done running.
-        continue
-    plt.axhline(
-        y=loss,
-        linestyle="--",
-        color=color_dict[num_synthetic],  # Use the corresponding color
-        zorder=1,
-    )
+# # Add dashed horizontal lines of the loss for each "num_synthetic" where "num_real" = 0.
+# # Extract the color palette
+# palette = sns.color_palette(
+#     "coolwarm", n_colors=len(runs_configs_df["num_synthetic"].unique())
+# )
+# color_dict = dict(zip(sorted(runs_configs_df["num_synthetic"].unique()), palette))
+# for num_synthetic in runs_configs_df["num_synthetic"].unique():
+#     try:
+#         loss = runs_configs_df[
+#             (runs_configs_df["num_real"] == 0)
+#             & (runs_configs_df["num_synthetic"] == num_synthetic)
+#         ]["eval/loss"].values[0]
+#     except IndexError:
+#         # TODO: Remove this once sweeps are done running.
+#         continue
+#     plt.axhline(
+#         y=loss,
+#         linestyle="--",
+#         color=color_dict[num_synthetic],  # Use the corresponding color
+#         zorder=1,
+#     )
 g.set(xlim=(2e2, 1.5e4), xscale="symlog", yscale="log")
 g.set_axis_labels(
     x_var="Real Data Points", y_var="Cross Entropy on Real Data (Test)", fontsize=20
@@ -181,9 +255,9 @@ model = sm.OLS(y, X).fit()
 
 print(f"The R^2 value for the proportion of real on the loss is {model.rsquared}")
 
-X = runs_configs_df["proportion"]
-model = sm.OLS(y, X).fit()
-print(f"The R^2 value for the absolute number of real on the loss is {model.rsquared}")
+# X = runs_configs_df["proportion"]
+# model = sm.OLS(y, X).fit()
+# print(f"The R^2 value for the absolute number of real on the loss is {model.rsquared}")
 
 runs_configs_df["num_data"] = (
     runs_configs_df["num_real"] + runs_configs_df["num_synthetic"]
@@ -278,6 +352,19 @@ sns.move_legend(g, "upper left", bbox_to_anchor=(1.0, 1.0))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="y=cross_entropy_x=proportion_real_hue=num_real",
+)
+plt.show()
+
+
+plt.close()
+g = sns.relplot(
+    data=extended_runs_histories_df,
+    kind="line",
+    x="_step",
+    y="eval/loss",
+    hue="num_real",
+    hue_norm=SymLogNorm(linthresh=1.0),
+    style="num_synthetic",
 )
 plt.show()
 

@@ -342,9 +342,6 @@ def extract_key_value_from_df_col(
 ):
     if new_col_name is None:
         new_col_name = key_in_dict
-    for ele in df[col_name]:
-        print(ele)
-        print(type(ele))
     df[new_col_name] = df[col_name].apply(
         lambda x: (
             x[key_in_dict]
