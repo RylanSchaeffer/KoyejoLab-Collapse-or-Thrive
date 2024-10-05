@@ -19,7 +19,21 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 wandb_sweep_ids = [
-    "1rgxc7qi",  # Linear regression fitting experiment (~22k runs); Accumulate, Accumulate-Subsample and Replace
+    "l7gatv8d",  # Linear Regression        Accumulate              Dim=1
+    "a163ryjz",  # Linear Regression        Accumulate              Dim=3
+    "25ter2ya",  # Linear Regression        Accumulate              Dim=10
+    "pjywsfx0",  # Linear Regression        Accumulate              Dim=32
+    "dy6ghxo1",  # Linear Regression        Accumulate              Dim=100
+    "nqc8d6d1",  # Linear Regression        Accumulate-Subsample    Dim=1
+    "01yterpm",  # Linear Regression        Accumulate-Subsample    Dim=3
+    "x444d2q6",  # Linear Regression        Accumulate-Subsample    Dim=10
+    "j27s0v5x",  # Linear Regression        Accumulate-Subsample    Dim=32
+    "vr0x9v2w",  # Linear Regression        Accumulate-Subsample    Dim=100
+    "zv4s906m",  # Linear Regression        Replace                 Dim=1
+    "eqxf6svs",  # Linear Regression        Replace                 Dim=3
+    "trmmfbt4",  # Linear Regression        Replace                 Dim=10
+    "09flzov3",  # Linear Regression        Replace                 Dim=32
+    "it5d7fh7",  # Linear Regression        Replace                 Dim=100
 ]
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
