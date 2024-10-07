@@ -87,13 +87,20 @@ for (
 ), extended_run_histories_subset_df in extended_run_histories_df.groupby(
     ["Data Dimension", r"$\sigma^2$"]
 ):
+    # Exclude all runs where the number of samples per iteration is less than the data dimension.
+    # This is because we are considering the underparameterized regime.
+    extended_run_histories_subset_df = extended_run_histories_subset_df[
+        extended_run_histories_subset_df["Num. Samples per Iteration"] > data_dim
+    ]
+
     plt.close()
     g = sns.relplot(
         data=extended_run_histories_subset_df,
         x="Model-Fitting Iteration",
         y="Mean Squared Error (Test)",
         hue="Num. Samples per Iteration",
-        hue_norm=matplotlib.colors.LogNorm(),
+        hue_order=[10, 32, 100, 316, 1000],
+        hue_norm=matplotlib.colors.LogNorm(vmin=10, vmax=1000),
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
         row="Task",
