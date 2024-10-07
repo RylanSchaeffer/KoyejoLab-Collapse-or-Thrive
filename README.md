@@ -10,9 +10,9 @@ This repository contains code and figures for our paper
 
 ![](notebooks/00_gaussian_fitting/results/squared_error_of_fit_mean_vs_model_fitting_iteration_by_noise_col=setting_dim=10.png)
 
-[![arXiv](https://img.shields.io/badge/arXiv-2407.15211-df2a2a.svg?style=for-the-badge)](https://arxiv.org/abs/2407.15211)
+[//]: # ([![arXiv]&#40;https://img.shields.io/badge/arXiv-2407.15211-df2a2a.svg?style=for-the-badge&#41;]&#40;https://arxiv.org/abs/2407.15211&#41;)
 
-[**Setup**](#setup) | [**Usage**](#usage) | [**Contributing**](#contributing) | [**Citation**](#citation) | [**Contact**](#contact)
+[**Setup**](#setup) | [**Usage**](#usage) | [**Citing**](#citing) | [**Contact**](#contact)
 
 ## Setup
 
@@ -85,7 +85,7 @@ wandb sweep sweeps/sft_language_model/value_synthetic/proportion_of_data_experim
 At present, this sweep creates results for a single number of real and synthetic datapoints, which are specified by num_real and num_synthetic in the `data_config`.  After each run, change the output model path to have the format `num_realR-num_fakeF-gemma-2-2b_hs2_iter1_sftsdXXX`.
 
 
-## Citations
+## Citing
 
 To cite this work, please use:
 
