@@ -25,6 +25,12 @@ wandb_sweep_ids = [
     "e1o3scvu",  # Blobs        Accumulate-Subsample    Bandwidth=Estimated
     "m1li7d4q",  # Blobs        Replace                 Bandwidth=SweepConstant
     "hd67v7hp",  # Blobs        Replace                 Bandwidth=Estimated
+    "opvtej63",  # Circles      Accumulate              Bandwidth=SweepConstant
+    "blqnlgy3",  # Circles      Accumulate              Bandwidth=Estimated
+    "yar30vwc",  # Circles      Accumulate-Subsample    Bandwidth=SweepConstant
+    "r3e77dfa",  # Circles      Accumulate-Subsample    Bandwidth=Estimated
+    "s1anms73",  # Circles      Replace                 Bandwidth=SweepConstant
+    "mqsifbhh",  # Circles      Replace                 Bandwidth=Estimated
 ]
 
 
