@@ -37,6 +37,13 @@ runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     finished_only=True,
 )
 
+# Exclude the non-estimated kernel bandwidths.
+runs_configs_df = runs_configs_df[
+    ~runs_configs_df["kernel_bandwidth"].isin({"scott", "silverman"})
+]
+# Convert the remaining kernel bandwidths to floats.
+runs_configs_df["kernel_bandwidth"] = runs_configs_df["kernel_bandwidth"].astype(float)
+
 keys_to_extract_from_cols = [
     (
         "data_config",
@@ -95,7 +102,8 @@ run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histori
 # Keep only a subset for faster and cleaner plotting.
 # Take only the model fitting iterations that are multiples of 10.
 run_histories_df = run_histories_df[
-    run_histories_df["Model-Fitting Iteration"] % 10 == 0
+    (run_histories_df["Model-Fitting Iteration"] % 10 == 0)
+    | (run_histories_df["Model-Fitting Iteration"] == 1)
 ]
 
 run_histories_df["Task"] = "Kernel Density Estimation"
@@ -119,37 +127,82 @@ extended_run_histories_df = run_histories_df.merge(
     how="inner",
 )
 
-for (
-    dataset,
-    num_samples_per_iteration,
-), subset_extended_run_histories_df in extended_run_histories_df.groupby(
-    ["Dataset", "Num. Samples per Iteration"]
+bandwidth_order = [
+    # "scott",
+    # "silverman",
+    0.01,
+    0.0316,
+    0.1,
+    0.316,
+    1.0,
+    3.16,
+    10.0,
+    31.6,
+    100.0,
+]
+
+for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.groupby(
+    ["Dataset"]
 ):
+    # plt.close()
+    # g = sns.relplot(
+    #     data=subset_extended_run_histories_df,
+    #     kind="line",
+    #     x=r"Bandwidth $h$",
+    #     y="NLL on Real Data (Test)",
+    #     col="Setting",
+    #     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
+    #     row="Num. Samples per Iteration",
+    #     row_order=[10, 32, 100, 316, 1000],
+    #     hue="Model-Fitting Iteration",
+    #     style="Kernel",
+    #     style_order=["Gaussian"],
+    #     palette="Spectral_r",
+    #     # legend="full",
+    #     facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
+    # )
+    # g.set(xscale="log", yscale="log")
+    # g.set_titles(
+    #     col_template="{col_name}",
+    #     row_template="Samples per Iteration: {row_name}",
+    # )
+    # sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+    # src.plot.save_plot_with_multiple_extensions(
+    #     plot_dir=results_dir,
+    #     plot_filename=f"y=nll_x=bandwidth_col=setting_hue=iter_row=samplesperiter_dataset={dataset.lower().replace(' ', '')}",
+    # )
+    # plt.show()
+    # print()
+
     plt.close()
-    g = sns.relplot(
+    g = sns.catplot(
         data=subset_extended_run_histories_df,
-        kind="line",
+        kind="point",
         x=r"Bandwidth $h$",
         y="NLL on Real Data (Test)",
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
-        row=r"Bandwidth $h$",
+        row="Num. Samples per Iteration",
+        row_order=[10, 32, 100, 316, 1000],
         hue="Model-Fitting Iteration",
-        style="Kernel",
-        style_order=["Gaussian"],
         palette="Spectral_r",
-        # legend="full",
-        facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
+        margin_titles=True,
+        legend="full",
     )
-    g.set(xscale="log", yscale="log")
+    g.set(yscale="log")
     g.set_titles(
         col_template="{col_name}",
-        row_template="h = {row_name}",
+        row_template="Num. Samples per Iter: {row_name}",
     )
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+    # Add title of the dataset.
+    # plt.subplots_adjust(top=0.9)
+    g.fig.suptitle(f"Dataset: {dataset}")
     src.plot.save_plot_with_multiple_extensions(
         plot_dir=results_dir,
-        plot_filename=f"y=nll_x=bandwidth_col=setting_hue=iter_dataset={dataset.lower().replace(' ', '')}",
+        plot_filename=f"y=nll_x=bandwidth_col=setting_hue=iter_row=samplesperiter_dataset={dataset.lower().replace(' ', '')}",
     )
     plt.show()
-    print()
+
+
+print("Finished running 11_kde_bandwidth_tests.py")
