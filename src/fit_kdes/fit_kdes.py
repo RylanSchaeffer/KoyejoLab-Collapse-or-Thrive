@@ -48,7 +48,6 @@ def fit_kernel_density_estimators():
     except ValueError:
         assert isinstance(bandwidth, str)
         assert bandwidth in {"scott", "silverman"}
-        pass
 
     kde = KernelDensity(kernel=wandb_config["kernel"], bandwidth=bandwidth)
 
