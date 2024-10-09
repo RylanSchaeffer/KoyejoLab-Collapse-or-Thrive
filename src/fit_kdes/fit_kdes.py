@@ -39,9 +39,18 @@ def fit_kernel_density_estimators():
     )[0]
     all_data = init_data_train.copy()
 
-    kde = KernelDensity(
-        kernel=wandb_config["kernel"], bandwidth=wandb_config["kernel_bandwidth"]
-    )
+    # sklearn also permits two string bandwidths ("scott", "silverman").
+    # If the bandwidth can be a float, make it a float.
+    # Otherwise, it's a string; check that it's one of the two allowed strings.
+    bandwidth = wandb_config["kernel_bandwidth"]
+    try:
+        bandwidth = float(bandwidth)
+    except ValueError:
+        assert isinstance(bandwidth, str)
+        assert bandwidth in {"scott", "silverman"}
+        pass
+
+    kde = KernelDensity(kernel=wandb_config["kernel"], bandwidth=bandwidth)
 
     # Iterate over the number of iterations
     for iteration_idx in range(1, wandb_config["num_iterations"] + 1):
