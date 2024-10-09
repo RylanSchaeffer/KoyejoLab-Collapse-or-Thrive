@@ -74,6 +74,8 @@ def download_wandb_project_runs_configs(
         data_dir, hashed_filename + f"_runs_configs.{filetype}"
     )
     if refresh or not os.path.isfile(runs_configs_df_path):
+        print(f"Creating {runs_configs_df_path} anew.")
+
         # Download sweep results
         api = wandb.Api(timeout=600)
 

@@ -29,7 +29,6 @@ def fit_kernel_density_estimators():
     assert setting in {"Accumulate", "Accumulate-Subsample", "Replace"}
     num_samples_per_iteration = wandb_config["num_samples_per_iteration"]
 
-    # This doesn't need to be Gaussian, but Gaussian is a fine starting point.
     init_data_train = src.data.create_dataset_for_kde(
         num_samples_per_iteration=wandb_config["num_samples_per_iteration"],
         data_config_dict=wandb_config["data_config"],
@@ -78,9 +77,6 @@ def fit_kernel_density_estimators():
                 "Mean Negative Log Prob (Test)": mean_neg_log_prob_test,
             },
         )
-
-    # Visualize the final KDE.
-    # plt.close()
 
     wandb.finish()
 
