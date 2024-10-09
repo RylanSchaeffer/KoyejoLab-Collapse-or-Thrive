@@ -31,6 +31,18 @@ wandb_sweep_ids = [
     "r3e77dfa",  # Circles      Accumulate-Subsample    Bandwidth=Estimated
     "s1anms73",  # Circles      Replace                 Bandwidth=SweepConstant
     "mqsifbhh",  # Circles      Replace                 Bandwidth=Estimated
+    "hxs0pcyf",  # Moons        Accumulate              Bandwidth=SweepConstant
+    "sa5gvrxi",  # Moons        Accumulate              Bandwidth=Estimated
+    "oyiwtneg",  # Moons        Accumulate-Subsample    Bandwidth=SweepConstant
+    "pxsc2h3l",  # Moons        Accumulate-Subsample    Bandwidth=Estimated
+    "6gng8hcz",  # Moons        Replace                 Bandwidth=SweepConstant
+    "b9v3uae4",  # Moons        Replace                 Bandwidth=Estimated
+    "ca5b3unh",  # Swiss Roll   Accumulate              Bandwidth=SweepConstant
+    "6lge4mz2",  # Swiss Roll   Accumulate              Bandwidth=Estimated
+    "2bw4tddu",  # Swiss Roll   Accumulate-Subsample    Bandwidth=SweepConstant
+    "iq65f1ag",  # Swiss Roll   Accumulate-Subsample    Bandwidth=Estimated
+    "pbyh976s",  # Swiss Roll   Replace                 Bandwidth=SweepConstant
+    "s4birrla",  # Swiss Roll   Replace                 Bandwidth=Estimated
 ]
 
 
