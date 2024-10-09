@@ -19,12 +19,12 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 wandb_sweep_ids = [
-    "4rlg66oe",  # Blobs        Accumulate              Bandwidth=Sweep
-    "hwdykev5",  # Blobs        Accumulate              Bandwidth=Estimated
-    "otef85ps",  # Blobs        Accumulate-Subsample    Bandwidth=Sweep
-    "v5e5gk09",  # Blobs        Accumulate-Subsample    Bandwidth=Estimated
-    "9qd65w91",  # Blobs        Replace                 Bandwidth=Sweep
-    "szvxq5zu",  # Blobs        Replace                 Bandwidth=Estimated
+    "4rlg66oe",  # Blobs        Accumulate              Bandwidth=SweepConstant
+    # "hwdykev5",  # Blobs        Accumulate              Bandwidth=Estimated
+    "otef85ps",  # Blobs        Accumulate-Subsample    Bandwidth=SweepConstant
+    # "v5e5gk09",  # Blobs        Accumulate-Subsample    Bandwidth=Estimated
+    "9qd65w91",  # Blobs        Replace                 Bandwidth=SweepConstant
+    # "szvxq5zu",  # Blobs        Replace                 Bandwidth=Estimated
 ]
 
 
