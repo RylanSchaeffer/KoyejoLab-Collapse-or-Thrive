@@ -6,7 +6,7 @@ parameters:
   data_config:
     parameters:
       dataset_name:
-        values: ["swiss_roll"]
+        values: ["moons"]
       dataset_kwargs:
         parameters:
           noise:
@@ -14,7 +14,7 @@ parameters:
   kernel:
     values: ["gaussian"]
   kernel_bandwidth:
-    values: [0.1, 0.5, 1.0]
+    values: ["scott", "silverman"]
   num_samples_per_iteration:
     values: [10, 32, 100, 316, 1000]
   num_iterations:
@@ -24,5 +24,4 @@ parameters:
   setting:
     values: [
       "Accumulate",
-      "Replace",
     ]

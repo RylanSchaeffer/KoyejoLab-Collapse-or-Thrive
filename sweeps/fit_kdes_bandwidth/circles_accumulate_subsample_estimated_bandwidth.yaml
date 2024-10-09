@@ -6,7 +6,7 @@ parameters:
   data_config:
     parameters:
       dataset_name:
-        values: ["moons"]
+        values: ["circles"]
       dataset_kwargs:
         parameters:
           noise:
@@ -14,7 +14,7 @@ parameters:
   kernel:
     values: ["gaussian"]
   kernel_bandwidth:
-    values: [0.01, 0.0316, 0.1, 0.316, 1.0, 3.16, 10.0, 31.6, 100.0]
+    values: ["scott", "silverman"]
   num_samples_per_iteration:
     values: [10, 32, 100, 316, 1000]
   num_iterations:
