@@ -19,12 +19,12 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 wandb_sweep_ids = [
-    "4rlg66oe",  # Blobs        Accumulate              Bandwidth=SweepConstant
-    # "hwdykev5",  # Blobs        Accumulate              Bandwidth=Estimated
-    "otef85ps",  # Blobs        Accumulate-Subsample    Bandwidth=SweepConstant
-    # "v5e5gk09",  # Blobs        Accumulate-Subsample    Bandwidth=Estimated
-    "9qd65w91",  # Blobs        Replace                 Bandwidth=SweepConstant
-    # "szvxq5zu",  # Blobs        Replace                 Bandwidth=Estimated
+    "vkyvd8f3",  # Blobs        Accumulate              Bandwidth=SweepConstant
+    "vl8bvwnp",  # Blobs        Accumulate              Bandwidth=Estimated
+    "isodemet",  # Blobs        Accumulate-Subsample    Bandwidth=SweepConstant
+    "e1o3scvu",  # Blobs        Accumulate-Subsample    Bandwidth=Estimated
+    "m1li7d4q",  # Blobs        Replace                 Bandwidth=SweepConstant
+    "hd67v7hp",  # Blobs        Replace                 Bandwidth=Estimated
 ]
 
 
@@ -97,15 +97,11 @@ run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histori
     sweep_ids=wandb_sweep_ids,
     refresh=refresh,
     wandb_username=wandb.api.default_entity,
+    wandb_run_history_samples=1000,
 )
 
 # Keep only a subset for faster and cleaner plotting.
 # Take only the model fitting iterations that are multiples of 10.
-run_histories_df = run_histories_df[
-    (run_histories_df["Model-Fitting Iteration"] % 10 == 0)
-    | (run_histories_df["Model-Fitting Iteration"] == 1)
-]
-
 run_histories_df["Task"] = "Kernel Density Estimation"
 
 run_histories_df = run_histories_df.rename(
@@ -144,39 +140,13 @@ bandwidth_order = [
 for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.groupby(
     ["Dataset"]
 ):
-    # plt.close()
-    # g = sns.relplot(
-    #     data=subset_extended_run_histories_df,
-    #     kind="line",
-    #     x=r"Bandwidth $h$",
-    #     y="NLL on Real Data (Test)",
-    #     col="Setting",
-    #     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
-    #     row="Num. Samples per Iteration",
-    #     row_order=[10, 32, 100, 316, 1000],
-    #     hue="Model-Fitting Iteration",
-    #     style="Kernel",
-    #     style_order=["Gaussian"],
-    #     palette="Spectral_r",
-    #     # legend="full",
-    #     facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
-    # )
-    # g.set(xscale="log", yscale="log")
-    # g.set_titles(
-    #     col_template="{col_name}",
-    #     row_template="Samples per Iteration: {row_name}",
-    # )
-    # sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
-    # src.plot.save_plot_with_multiple_extensions(
-    #     plot_dir=results_dir,
-    #     plot_filename=f"y=nll_x=bandwidth_col=setting_hue=iter_row=samplesperiter_dataset={dataset.lower().replace(' ', '')}",
-    # )
-    # plt.show()
-    # print()
-
     plt.close()
     g = sns.catplot(
-        data=subset_extended_run_histories_df,
+        # Subsample for visibility.
+        data=subset_extended_run_histories_df[
+            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 100 == 0)
+            | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
+        ],
         kind="point",
         x=r"Bandwidth $h$",
         y="NLL on Real Data (Test)",
@@ -195,14 +165,48 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
         row_template="Num. Samples per Iter: {row_name}",
     )
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
-    # Add title of the dataset.
-    # plt.subplots_adjust(top=0.9)
     g.fig.suptitle(f"Dataset: {dataset}")
     src.plot.save_plot_with_multiple_extensions(
         plot_dir=results_dir,
         plot_filename=f"y=nll_x=bandwidth_col=setting_hue=iter_row=samplesperiter_dataset={dataset.lower().replace(' ', '')}",
     )
-    plt.show()
+    # plt.show()
+
+    plt.close()
+    g = sns.relplot(
+        # Subsample for speed.
+        data=subset_extended_run_histories_df[
+            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 25 == 0)
+            | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
+        ],
+        kind="line",
+        x="Model-Fitting Iteration",
+        y="NLL on Real Data (Test)",
+        col="Setting",
+        col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
+        hue=r"Bandwidth $h$",
+        hue_norm=matplotlib.colors.LogNorm(),
+        hue_order=bandwidth_order,
+        row="Num. Samples per Iteration",
+        row_order=[10, 32, 100, 316, 1000],
+        style="Kernel",
+        style_order=["Gaussian"],
+        palette="cool",
+        legend="full",
+        facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
+    )
+    g.set(yscale="log")
+    g.set_titles(
+        col_template="{col_name}",
+        row_template="Num. Samples per Iter: {row_name}",
+    )
+    sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+    g.fig.suptitle(f"Dataset: {dataset}")
+    src.plot.save_plot_with_multiple_extensions(
+        plot_dir=results_dir,
+        plot_filename=f"y=nll_x=iter_col=setting_hue=bandwidth_row=samplesperiter_dataset={dataset.lower().replace(' ', '')}",
+    )
+    # plt.show()
 
 
 print("Finished running 11_kde_bandwidth_tests.py")
