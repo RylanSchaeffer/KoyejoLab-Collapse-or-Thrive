@@ -34,6 +34,10 @@ Upgrade pip:
 
 ## Usage
 
+### Multivariate Gaussian Modeling
+
+### Supervised Finetuning of Language Models
+
 This code has two alternating steps: (1) training+evaluation and (2) sampling.
 
 For developing or manually running training+evaluation, from the project directory, run:
@@ -74,7 +78,12 @@ wandb sweep <path to the sweep's YML file, e.g., sweeps/sample_language_model/he
 wandb agent rylan/rerevisiting-model-collapse-sample/<sweep ID>
 ```
 
-## Proportionality experiments
+### Kernel Density Estimation
+
+### Linear Regression
+
+### Real and Synthetic Data Proportionality
+
 The proportionality experiments are run by the file `src/sft_language_model/sft_language_model_mixed_data.py`.  
 
 To run a sweep for the proportionality experiments, run 
