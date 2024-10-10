@@ -194,7 +194,7 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
     g = sns.relplot(
         # Subsample for speed.
         data=subset_extended_run_histories_df[
-            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 25 == 0)
+            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
             | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
         ],
         kind="line",
