@@ -125,9 +125,47 @@ extended_run_histories_df = run_histories_df.merge(
     how="inner",
 )
 
+individual_hyperparameter_curves_results_dir = os.path.join(
+    results_dir, "individual_hyperparameter_curves"
+)
+os.makedirs(individual_hyperparameter_curves_results_dir, exist_ok=True)
+for (
+    dataset,
+    bandwidth,
+    num_samples_per_iter,
+), subset_extended_run_histories_df in extended_run_histories_df.groupby(
+    ["Dataset", r"Bandwidth $h$", "Num. Samples per Iteration"]
+):
+    plt.close()
+    plt.figure(figsize=(16, 10))
+    g = sns.lineplot(
+        # Subsample for speed.
+        data=subset_extended_run_histories_df[
+            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
+            | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
+        ],
+        x="Model-Fitting Iteration",
+        y="NLL on Real Data (Test)",
+        hue="Setting",
+        hue_order=["Replace", "Accumulate-Subsample", "Accumulate"],
+        # style="Kernel",
+        # style_order=["Gaussian"],
+        palette="flare",
+        legend="full",
+    )
+    plt.xscale("log")
+    sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+    plt.title(
+        f"Dataset: {dataset} Bandwidth: {bandwidth} Num Samples Per Iter: {num_samples_per_iter}"
+    )
+    src.plot.save_plot_with_multiple_extensions(
+        plot_dir=individual_hyperparameter_curves_results_dir,
+        plot_filename=f"y=nll_x=iter_hue=setting_bandwidth={bandwidth}_samplesperiter={num_samples_per_iter}_dataset={dataset.lower().replace(' ', '')}",
+    )
+    # plt.show()
+
+
 bandwidth_order = [
-    # "scott",
-    # "silverman",
     0.01,
     0.0316,
     0.1,
@@ -191,11 +229,11 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
         hue_order=bandwidth_order,
         row="Num. Samples per Iteration",
         row_order=[10, 32, 100, 316, 1000],
-        style="Kernel",
-        style_order=["Gaussian"],
+        # style="Kernel",
+        # style_order=["Gaussian"],
         palette="cool",
         legend="full",
-        facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
+        facet_kws={"sharex": True, "sharey": True, "margin_titles": True},
     )
     g.set(yscale="log")
     g.set_titles(

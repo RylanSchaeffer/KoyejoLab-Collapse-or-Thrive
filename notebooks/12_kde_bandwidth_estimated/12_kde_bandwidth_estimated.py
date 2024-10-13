@@ -147,6 +147,8 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
         hue="Model-Fitting Iteration",
         palette="Spectral_r",
         margin_titles=True,
+        linestyle="",
+        err_style="bars",
         legend="full",
     )
     g.set(yscale="log")
@@ -175,7 +177,6 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
         col="Setting",
         col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
         hue=r"Bandwidth $h$",
-        hue_norm=matplotlib.colors.LogNorm(),
         hue_order=bandwidth_order,
         row="Num. Samples per Iteration",
         row_order=[10, 32, 100, 316, 1000],
@@ -183,7 +184,7 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
         style_order=["Gaussian"],
         palette="cool",
         legend="full",
-        facet_kws={"sharex": True, "sharey": "row", "margin_titles": True},
+        facet_kws={"sharex": True, "sharey": True, "margin_titles": True},
     )
     g.set(yscale="log")
     g.set_titles(
@@ -199,4 +200,4 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
     # plt.show()
 
 
-print("Finished running 11_kde_bandwidth_swept.py")
+print("Finished running 12_kde_bandwidth_estimated.py")

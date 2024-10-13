@@ -37,7 +37,7 @@ def fit_kernel_density_estimators():
         num_samples_per_iteration=500,  # Hard coded to ensure we have a large population of data for evaluation.
         data_config_dict=wandb_config["data_config"],
     )[0]
-    all_data = init_data_train.copy()
+    all_data_train = init_data_train.copy()
 
     # sklearn also permits two string bandwidths ("scott", "silverman").
     # If the bandwidth can be a float, make it a float.
@@ -55,15 +55,15 @@ def fit_kernel_density_estimators():
     for iteration_idx in range(1, wandb_config["num_iterations"] + 1):
         if setting in {"Accumulate", "Replace"}:
             # Fit the data.
-            kde.fit(all_data)
+            kde.fit(all_data_train)
         elif setting in {"Accumulate-Subsample"}:
             # Subsample the total data.
             subsample_idx = np.random.choice(
-                np.arange(all_data.shape[0]),
+                np.arange(all_data_train.shape[0]),
                 size=num_samples_per_iteration,
                 replace=False,
             )
-            kde.fit(all_data[subsample_idx])
+            kde.fit(all_data_train[subsample_idx])
         else:
             raise ValueError(f"Unknown setting: {setting}")
 
@@ -73,9 +73,9 @@ def fit_kernel_density_estimators():
         # Create data for the next model-fitting iteration.
         new_data = kde.sample(n_samples=num_samples_per_iteration)
         if setting == "Replace":
-            all_data = new_data
+            all_data_train = new_data
         elif setting in {"Accumulate", "Accumulate-Subsample"}:
-            all_data = np.concatenate((all_data, new_data))
+            all_data_train = np.concatenate((all_data_train, new_data))
         else:
             raise ValueError(f"Unknown setting: {setting}")
 

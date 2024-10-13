@@ -15,8 +15,8 @@ DEFAULT_KERNEL_DENSITY_FITTING_CONFIG = {
     "num_iterations": 100,
     "seed": 0,
     # "setting": "Accumulate",
-    "setting": "Accumulate-Subsample",
-    # "setting": "Replace",
+    # "setting": "Accumulate-Subsample",
+    "setting": "Replace",
 }
 
 
