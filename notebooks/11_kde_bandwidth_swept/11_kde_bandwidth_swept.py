@@ -145,10 +145,11 @@ for (
     plt.figure(figsize=(16, 10))
     g = sns.lineplot(
         # Subsample for speed.
-        data=subset_extended_run_histories_df[
-            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
-            | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
-        ],
+        # data=subset_extended_run_histories_df[
+        #     (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
+        #     | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
+        # ],
+        data=subset_extended_run_histories_df,
         x="Model-Fitting Iteration",
         y="NLL on Real Data (Test)",
         hue="Setting",
@@ -158,7 +159,7 @@ for (
         palette="flare",
         legend="full",
     )
-    plt.xscale("log")
+    plt.yscale("log")
     sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
     plt.title(
         f"Dataset: {dataset} Bandwidth: {bandwidth} Num Samples Per Iter: {num_samples_per_iter}"
@@ -220,10 +221,11 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
     plt.close()
     g = sns.relplot(
         # Subsample for speed.
-        data=subset_extended_run_histories_df[
-            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
-            | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
-        ],
+        # data=subset_extended_run_histories_df[
+        #     (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
+        #     | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
+        # ],
+        data=subset_extended_run_histories_df,
         kind="line",
         x="Model-Fitting Iteration",
         y="NLL on Real Data (Test)",

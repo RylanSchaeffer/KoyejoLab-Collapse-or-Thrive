@@ -89,6 +89,14 @@ runs_configs_df["Dataset"] = runs_configs_df["Dataset"].map(
     }
 )
 
+# Rename Bandwidth values.
+runs_configs_df[r"Bandwidth $h$"] = runs_configs_df[r"Bandwidth $h$"].map(
+    {
+        "scott": "Scott",
+        "silverman": "Silverman",
+    }
+)
+
 
 run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
     wandb_project_path="rerevisiting-model-collapse-fit-kdes",
@@ -148,7 +156,7 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
         palette="Spectral_r",
         margin_titles=True,
         linestyle="",
-        err_style="bars",
+        # err_style="bars",
         legend="full",
     )
     g.set(yscale="log")
@@ -167,10 +175,11 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
     plt.close()
     g = sns.relplot(
         # Subsample for speed.
-        data=subset_extended_run_histories_df[
-            (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
-            | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
-        ],
+        # data=subset_extended_run_histories_df[
+        # (subset_extended_run_histories_df["Model-Fitting Iteration"] % 10 == 0)
+        # | (subset_extended_run_histories_df["Model-Fitting Iteration"] == 1)
+        # ],
+        data=subset_extended_run_histories_df,
         kind="line",
         x="Model-Fitting Iteration",
         y="NLL on Real Data (Test)",
