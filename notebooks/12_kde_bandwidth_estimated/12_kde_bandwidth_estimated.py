@@ -131,8 +131,8 @@ extended_run_histories_df = run_histories_df.merge(
 )
 
 bandwidth_order = [
-    "scott",
-    "silverman",
+    "Scott",
+    "Silverman",
 ]
 
 for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.groupby(
