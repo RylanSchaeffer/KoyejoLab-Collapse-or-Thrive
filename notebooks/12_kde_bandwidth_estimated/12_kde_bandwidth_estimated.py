@@ -19,32 +19,19 @@ data_dir, results_dir = src.analyze.setup_notebook_dir(
 
 
 wandb_sweep_ids = [
-    "vkyvd8f3",  # Blobs        Accumulate              Bandwidth=SweepConstant
     "vl8bvwnp",  # Blobs        Accumulate              Bandwidth=Estimated
-    "isodemet",  # Blobs        Accumulate-Subsample    Bandwidth=SweepConstant
     "nc9ogssg",  # Blobs        Accumulate-Subsample    Bandwidth=Estimated
-    "m1li7d4q",  # Blobs        Replace                 Bandwidth=SweepConstant
     "hd67v7hp",  # Blobs        Replace                 Bandwidth=Estimated
-    "opvtej63",  # Circles      Accumulate              Bandwidth=SweepConstant
     "blqnlgy3",  # Circles      Accumulate              Bandwidth=Estimated
-    "yar30vwc",  # Circles      Accumulate-Subsample    Bandwidth=SweepConstant
     "r3e77dfa",  # Circles      Accumulate-Subsample    Bandwidth=Estimated
-    "s1anms73",  # Circles      Replace                 Bandwidth=SweepConstant
     "mqsifbhh",  # Circles      Replace                 Bandwidth=Estimated
-    "hxs0pcyf",  # Moons        Accumulate              Bandwidth=SweepConstant
     "sa5gvrxi",  # Moons        Accumulate              Bandwidth=Estimated
-    "oyiwtneg",  # Moons        Accumulate-Subsample    Bandwidth=SweepConstant
     "pxsc2h3l",  # Moons        Accumulate-Subsample    Bandwidth=Estimated
-    "6gng8hcz",  # Moons        Replace                 Bandwidth=SweepConstant
     "b9v3uae4",  # Moons        Replace                 Bandwidth=Estimated
-    "ca5b3unh",  # Swiss Roll   Accumulate              Bandwidth=SweepConstant
     "6lge4mz2",  # Swiss Roll   Accumulate              Bandwidth=Estimated
-    "2bw4tddu",  # Swiss Roll   Accumulate-Subsample    Bandwidth=SweepConstant
     "iq65f1ag",  # Swiss Roll   Accumulate-Subsample    Bandwidth=Estimated
-    "pbyh976s",  # Swiss Roll   Replace                 Bandwidth=SweepConstant
     "s4birrla",  # Swiss Roll   Replace                 Bandwidth=Estimated
 ]
-
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     wandb_project_path="rerevisiting-model-collapse-fit-kdes",
@@ -55,12 +42,6 @@ runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
     finished_only=True,
 )
 
-# Exclude the non-estimated kernel bandwidths.
-runs_configs_df = runs_configs_df[
-    ~runs_configs_df["kernel_bandwidth"].isin({"scott", "silverman"})
-]
-# Convert the remaining kernel bandwidths to floats.
-runs_configs_df["kernel_bandwidth"] = runs_configs_df["kernel_bandwidth"].astype(float)
 
 keys_to_extract_from_cols = [
     (
@@ -142,17 +123,8 @@ extended_run_histories_df = run_histories_df.merge(
 )
 
 bandwidth_order = [
-    # "scott",
-    # "silverman",
-    0.01,
-    0.0316,
-    0.1,
-    0.316,
-    1.0,
-    3.16,
-    10.0,
-    31.6,
-    100.0,
+    "scott",
+    "silverman",
 ]
 
 for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.groupby(
@@ -227,4 +199,4 @@ for (dataset,), subset_extended_run_histories_df in extended_run_histories_df.gr
     # plt.show()
 
 
-print("Finished running 11_kde_bandwidth_tests.py")
+print("Finished running 11_kde_bandwidth_swept.py")

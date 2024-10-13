@@ -1,8 +1,8 @@
 import ast
+import concurrent.futures
 import hashlib
-import os
-
 import numpy as np
+import os
 import pandas as pd
 import pyarrow
 import requests
@@ -62,58 +62,56 @@ def download_wandb_project_runs_configs(
     sweep_ids: List[str] = None,
     finished_only: bool = True,
     refresh: bool = False,
-    wandb_username: str = None,
+    wandb_username: Optional[str] = None,
     filetype: str = "csv",
+    max_workers: int = 10,  # New parameter to control the number of parallel workers
 ) -> pd.DataFrame:
     assert filetype in {"csv", "feather", "parquet"}
 
-    # Hash because otherwise too long.
     filename = "sweeps=" + ",".join(sweep_ids)
     hashed_filename = hashlib.md5(filename.encode()).hexdigest()
     runs_configs_df_path = os.path.join(
         data_dir, hashed_filename + f"_runs_configs.{filetype}"
     )
+
     if refresh or not os.path.isfile(runs_configs_df_path):
         print(f"Creating {runs_configs_df_path} anew.")
 
-        # Download sweep results
         api = wandb.Api(timeout=600)
 
         if wandb_username is None:
             wandb_username = api.viewer.username
 
         sweep_results_list = []
-        for sweep_id in sweep_ids:
-            try:
-                sweep = api.sweep(f"{wandb_username}/{wandb_project_path}/{sweep_id}")
-                for run in tqdm(sweep.runs):
-                    # .summary contains the output keys/values for metrics like accuracy.
-                    #  We call ._json_dict to omit large files
-                    summary = run.summary._json_dict
 
-                    # .config contains the hyperparameters.
-                    #  We remove special values that start with _.
-                    summary.update(
-                        {k: v for k, v in run.config.items() if not k.startswith("_")}
-                    )
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_run = {}
 
-                    summary.update(
-                        {
-                            "State": run.state,
-                            "Sweep": run.sweep.id if run.sweep is not None else None,
-                            "run_id": run.id,
-                        }
+            for sweep_id in sweep_ids:
+                try:
+                    sweep = api.sweep(
+                        f"{wandb_username}/{wandb_project_path}/{sweep_id}"
                     )
-                    # .name is the human-readable name of the run.
-                    summary.update({"run_name": run.name})
-                    sweep_results_list.append(summary)
-            except:
-                pass
+                    for run in sweep.runs:
+                        future_to_run[
+                            executor.submit(
+                                download_wandb_project_runs_configs_helper, run
+                            )
+                        ] = run
+                except Exception as e:
+                    print(f"Error processing sweep {sweep_id}: {str(e)}")
+
+            for future in tqdm(
+                concurrent.futures.as_completed(future_to_run), total=len(future_to_run)
+            ):
+                result = future.result()
+                if result is not None:
+                    sweep_results_list.append(result)
 
         runs_configs_df = pd.DataFrame(sweep_results_list)
         runs_configs_df.reset_index(inplace=True, drop=True)
 
-        # Save to disk.
+        # Save to disk
         runs_configs_df.to_csv(
             runs_configs_df_path.replace(filetype, "csv"), index=False
         )
@@ -121,9 +119,9 @@ def download_wandb_project_runs_configs(
             runs_configs_df.to_feather(
                 runs_configs_df_path.replace(filetype, "feather")
             )
-        except BaseException:
-            # pyarrow.lib.ArrowInvalid: ("Could not convert 'NaN' with type str: tried to convert to double", 'Conversion failed for column loss/score_model=claude3opus with type object')
-            pass
+        except Exception as e:
+            print(f"Error saving to feather: {str(e)}")
+
         try:
             runs_configs_without_model_generations_kwargs_df = runs_configs_df.drop(
                 columns=["model_generation_kwargs"]
@@ -131,9 +129,8 @@ def download_wandb_project_runs_configs(
             runs_configs_without_model_generations_kwargs_df.to_parquet(
                 runs_configs_df_path.replace(filetype, "parquet"), index=False
             )
-        except BaseException:
-            # pyarrow.lib.ArrowNotImplementedError: Cannot write struct type 'model_generation_kwargs' with no child field to Parquet. Consider adding a dummy child field.
-            pass
+        except Exception as e:
+            print(f"Error saving to parquet: {str(e)}")
 
         print(f"Regenerated and wrote {runs_configs_df_path} to disk.")
         del runs_configs_df
@@ -152,7 +149,7 @@ def download_wandb_project_runs_configs(
     # Keep only finished runs
     finished_runs = runs_configs_df["State"] == "finished"
     print(
-        f"% of successfully finished runs: {100.0 * finished_runs.mean()} ({finished_runs.sum()} / {len(finished_runs)})"
+        f"% of successfully finished runs: {100.0 * finished_runs.mean():.2f}% ({finished_runs.sum()} / {len(finished_runs)})"
     )
 
     if finished_only:
@@ -167,6 +164,24 @@ def download_wandb_project_runs_configs(
     return runs_configs_df
 
 
+def download_wandb_project_runs_configs_helper(run):
+    try:
+        summary = run.summary._json_dict
+        summary.update({k: v for k, v in run.config.items() if not k.startswith("_")})
+        summary.update(
+            {
+                "State": run.state,
+                "Sweep": run.sweep.id if run.sweep is not None else None,
+                "run_id": run.id,
+                "run_name": run.name,
+            }
+        )
+        return summary
+    except Exception as e:
+        print(f"Error processing run {run.id}: {str(e)}")
+        return None
+
+
 def download_wandb_project_runs_histories(
     wandb_project_path: str,
     data_dir: str,
@@ -176,6 +191,7 @@ def download_wandb_project_runs_histories(
     wandb_username: Optional[str] = None,
     filetype: str = "csv",
     nrows_to_read: Optional[int] = None,
+    max_workers: int = 10,
 ) -> pd.DataFrame:
     assert filetype in {"csv", "feather", "parquet"}
 
@@ -196,32 +212,37 @@ def download_wandb_project_runs_histories(
         print("Downloading runs' histories...")
         for iteration, sweep_id in enumerate(sweep_ids):
             sweep = api.sweep(f"{wandb_username}/{wandb_project_path}/{sweep_id}")
-            for run in tqdm(sweep.runs):
-                # https://community.wandb.ai/t/run-history-returns-different-values-on-almost-each-call/2431/4
 
-                history = None
-                for num_attempts in range(5):
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=max_workers
+            ) as executor:
+                future_to_run = {
+                    executor.submit(
+                        download_wandb_project_runs_histories_helper,
+                        run,
+                        wandb_run_history_samples,
+                    ): run
+                    for run in sweep.runs
+                }
+
+                for future in tqdm(
+                    concurrent.futures.as_completed(future_to_run),
+                    total=len(future_to_run),
+                ):
+                    run = future_to_run[future]
                     try:
-                        history = run.history(
-                            samples=wandb_run_history_samples,
-                        )
-                        break
-                    except (requests.exceptions.HTTPError, wandb.errors.CommError):
-                        print("Retrying...")
-                        time.sleep(3)
+                        history = future.result()
+                        if history is not None:
+                            history["model_fitting_iteration"] = iteration
+                            runs_histories_list.append(history)
+                    except Exception as exc:
+                        print(f"{run.id} generated an exception: {exc}")
 
-                # Skip this run if the API doesn't let us download it.
-                if history is None or history.empty:
-                    continue
+        assert len(runs_histories_list) > 0
+        runs_histories_df = pd.concat(runs_histories_list, sort=False)
 
-                # Drop generation columns because these are meaty.
-                generation_columns = [
-                    col for col in history.columns if "generation" in col
-                ]
-                history.drop(columns=generation_columns, inplace=True)
-                history["run_id"] = run.id
-                history["model_fitting_iteration"] = iteration
-                runs_histories_list.append(history)
+        runs_histories_df.sort_values(["run_id"], ascending=True, inplace=True)
+        runs_histories_df.reset_index(inplace=True, drop=True)
 
         assert len(runs_histories_list) > 0
         runs_histories_df = pd.concat(runs_histories_list, sort=False)
@@ -262,6 +283,25 @@ def download_wandb_project_runs_histories(
     print(f"Loaded {runs_histories_df_path} from disk.")
 
     return runs_histories_df
+
+
+def download_wandb_project_runs_histories_helper(run, wandb_run_history_samples):
+    history = None
+    for num_attempts in range(5):
+        try:
+            history = run.history(samples=wandb_run_history_samples)
+            break
+        except (requests.exceptions.HTTPError, wandb.errors.CommError):
+            print(f"Retrying run {run.id}...")
+            time.sleep(3)
+
+    if history is None or history.empty:
+        return None
+
+    generation_columns = [col for col in history.columns if "generation" in col]
+    history.drop(columns=generation_columns, inplace=True)
+    history["run_id"] = run.id
+    return history
 
 
 def duplicate_real_data_runs(
