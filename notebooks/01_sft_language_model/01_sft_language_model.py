@@ -77,7 +77,7 @@ g = sns.relplot(
     marker="o",
     markersize=15,
 )
-g.set(xlim=(0.5, 10.5))
+g.set(xlim=(0.5, 10.5), yscale="log")
 g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
 g.set_titles(col_template="{col_name}")
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))

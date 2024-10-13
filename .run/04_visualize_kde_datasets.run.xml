@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="notebooks/03_debug_kde_top_hat" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="04_visualize_kde_datasets" type="PythonConfigurationType" factoryName="Python">
     <module name="KoyejoLab-Re-Revisiting-Model-Collapse" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -13,7 +13,7 @@
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/notebooks/03_debug_kde_top_hat/03_debug_kde_top_hat.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/notebooks/04_visualize_kde_datasets/04_visualize_kde_datasets.py" />
     <option name="PARAMETERS" value="" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
