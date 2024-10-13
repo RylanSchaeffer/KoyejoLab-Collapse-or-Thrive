@@ -136,6 +136,11 @@ for (
 ), subset_extended_run_histories_df in extended_run_histories_df.groupby(
     ["Dataset", r"Bandwidth $h$", "Num. Samples per Iteration"]
 ):
+    dataset_individual_hyperparameter_curves_results_dir = os.path.join(
+        individual_hyperparameter_curves_results_dir, dataset.lower().replace(" ", "")
+    )
+    os.makedirs(dataset_individual_hyperparameter_curves_results_dir, exist_ok=True)
+
     plt.close()
     plt.figure(figsize=(16, 10))
     g = sns.lineplot(
@@ -159,7 +164,7 @@ for (
         f"Dataset: {dataset} Bandwidth: {bandwidth} Num Samples Per Iter: {num_samples_per_iter}"
     )
     src.plot.save_plot_with_multiple_extensions(
-        plot_dir=individual_hyperparameter_curves_results_dir,
+        plot_dir=dataset_individual_hyperparameter_curves_results_dir,
         plot_filename=f"y=nll_x=iter_hue=setting_bandwidth={bandwidth}_samplesperiter={num_samples_per_iter}_dataset={dataset.lower().replace(' ', '')}",
     )
     # plt.show()
