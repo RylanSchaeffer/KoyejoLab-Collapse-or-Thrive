@@ -8,8 +8,8 @@ import src.analyze
 import src.plot
 
 
-# refresh = False
-refresh = True
+refresh = False
+# refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -111,6 +111,7 @@ runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
 )
 
 runs_configs_df["Num. Samples per Iteration"] = 12500
+runs_configs_df["Language Model"] = "Gemma 2 2B"
 
 runs_configs_df["Task"] = "Language Model Finetuning"
 
@@ -123,9 +124,10 @@ g = sns.relplot(
     col="paradigm",
     col_order=["Replace", "Accumulate-Subsample", "Accumulate"],
     row="Task",
-    palette="cool",
     legend="full",
     hue="Num. Samples per Iteration",
+    # hue="Language Model",
+    palette="cool",
     # hue_norm=matplotlib.colors.LogNorm(),
     # marker="o",
     # markersize=15,
