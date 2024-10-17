@@ -8,8 +8,8 @@ import src.analyze
 import src.plot
 
 
-refresh = False
-# refresh = True
+# refresh = False
+refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -32,6 +32,12 @@ wandb_sweep_ids = [
     "lew2aq26",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration12
     "maebpwai",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration13
     "u9fh6q3a",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration14
+    "4dymugqx",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration15
+    "e178zr9w",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration16
+    "an1rjc3i",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration17
+    "d8pn86x3",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration18
+    "5di8jnsz",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration19
+    "wkzzkpj8",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate             Iteration20
     "y4oue58c",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 1)
     "3cn97hta",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration1 (Part 2)
     "4ec1abqn",  # HelpSteer2   Gemma2-2B   Paradigm=Accumulate-Subsample   Iteration2
@@ -69,7 +75,7 @@ wandb_sweep_ids = [
     "2ko06q37",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration14
     "q3dogobf",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration15
     "dhyswzyh",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration16
-    "x1b5cabr",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration17
+    "cso0atoi",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration17
     "i348nela",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration18
     "pfvkcnlx",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration19
     "8rjp6348",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration20
