@@ -99,6 +99,15 @@ At present, this sweep creates results for a single number of real and synthetic
 To cite this work, please use:
 
 ```
+@misc{kazdan2024collapsethriveperilspromises,
+      title={Collapse or Thrive? Perils and Promises of Synthetic Data in a Self-Generating World}, 
+      author={Joshua Kazdan and Rylan Schaeffer and Apratim Dey and Matthias Gerstgrasser and Rafael Rafailov and David L. Donoho and Sanmi Koyejo},
+      year={2024},
+      eprint={2410.16713},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2410.16713}, 
+}
 ```
 
 ## Contact
