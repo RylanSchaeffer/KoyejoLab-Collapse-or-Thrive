@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import os
 import pandas as pd
 import seaborn as sns
@@ -37,6 +38,10 @@ wandb_sweep_ids = [
     "70nfygoq",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration8
     "3fd19zjs",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration9
     "hnk0v7gf",  # HelpSteer2   Gemma2-2B   Paradigm=Replace                Iteration10
+    "cybhcd41",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration1
+    "oy29fswj",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration2
+    "3ueeirbr",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration3
+    "q6rvic5l",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration1
 ]
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
@@ -56,12 +61,25 @@ runs_configs_df = src.analyze.extract_key_value_from_df_col(
     new_col_name="dataset",
 )
 
+runs_configs_df = src.analyze.extract_key_value_from_df_col(
+    df=runs_configs_df,
+    col_name="model_config",
+    key_in_dict="initial_model_name_or_path",
+    new_col_name="Model",
+)
+
+runs_configs_df["Model"] = runs_configs_df["Model"].map(
+    {
+        "google/gemma-2-2b": "Gemma 2 2B",
+        "google/gemma-2-9b": "Gemma 2 9B",
+        "google/gemma-2-27b": "Gemma 2 27B",
+    }
+)
+
 # Add the number of model fitting iterations.
 runs_configs_df["Model Fitting Iteration"] = runs_configs_df["dataset"].apply(
     src.analyze.determine_model_fitting_iteration_from_datasets_str
 )
-
-runs_configs_df["Num. Samples per Iteration"] = 12500
 
 plt.close()
 g = sns.relplot(
@@ -71,7 +89,7 @@ g = sns.relplot(
     y="eval/loss",
     col="paradigm",
     col_order=["Replace", "Accumulate"],
-    hue="Num. Samples per Iteration",
+    hue="Model",
     palette="cool",
     legend="full",
     marker="o",
@@ -81,11 +99,16 @@ g.set(xlim=(0.5, 10.5), yscale="log")
 g.set_axis_labels(y_var="Cross Entropy on Real Data (Test)", fontsize=20)
 g.set_titles(col_template="{col_name}")
 sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+for ax in g.axes.flat:
+    ax.yaxis.set_major_locator(ticker.LogLocator(base=10.0, subs="auto", numticks=10))
+    ax.yaxis.set_major_formatter(
+        ticker.FuncFormatter(lambda x, _: f"{x:g}" if x != 1 else "")
+    )
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="y=eval_loss_x=model_fitting_iteration_col=setting",
 )
-# plt.show()
+plt.show()
 
 # extended_run_histories_df = runs_histories_df.merge(
 #     runs_configs_df[["run_id", "Model Fitting Iteration"]],
