@@ -90,6 +90,7 @@ g = sns.relplot(
     col="paradigm",
     col_order=["Replace", "Accumulate"],
     hue="Model",
+    hue_order=["Gemma 2 2B", "Gemma 2 9B", "Gemma 2 27B"],
     palette="cool",
     legend="full",
     marker="o",
