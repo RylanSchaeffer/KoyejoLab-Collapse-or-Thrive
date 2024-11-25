@@ -42,9 +42,12 @@ wandb_sweep_ids = [
     "oy29fswj",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration2
     "3ueeirbr",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration3
     "ge1iow70",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration4
+    "sqmqrzvq",  # HelpSteer2   Gemma2-9B   Paradigm=Accumulate             Iteration5
     "q6rvic5l",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration1
     "qg8stube",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration2
     "9r3j5dg5",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration3
+    "1p9u2eq9",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration4
+    "nyeq61cy",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration5
 ]
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
