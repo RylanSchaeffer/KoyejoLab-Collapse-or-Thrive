@@ -8,8 +8,8 @@ import src.analyze
 import src.plot
 
 
-refresh = False
-# refresh = True
+# refresh = False
+refresh = True
 
 data_dir, results_dir = src.analyze.setup_notebook_dir(
     notebook_dir=os.path.dirname(os.path.abspath(__file__)),
@@ -51,7 +51,10 @@ wandb_sweep_ids = [
     "uaoh66ds",  # HelpSteer2   Gemma2-9B   Paradigm=Replace                Iteration6
     "2touoqm7",  # HelpSteer2   Gemma2-27B  Paradigm=Accumulate             Iteration1
     "jrhsp696",  # HelpSteer2   Gemma2-27B  Paradigm=Accumulate             Iteration2
+    "1gbt31up",  # HelpSteer2   Gemma2-27B  Paradigm=Accumulate             Iteration3
     "x3ql72ir",  # HelpSteer2   Gemma2-27B  Paradigm=Replace                Iteration1
+    "ktkk7fet",  # HelpSteer2   Gemma2-27B  Paradigm=Replace                Iteration2
+    "udchhhjf",  # HelpSteer2   Gemma2-27B  Paradigm=Replace                Iteration3
 ]
 
 runs_configs_df: pd.DataFrame = src.analyze.download_wandb_project_runs_configs(
