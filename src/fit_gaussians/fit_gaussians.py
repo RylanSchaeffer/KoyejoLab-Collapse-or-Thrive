@@ -62,8 +62,6 @@ def fit_gaussians():
             np.square(fit_mean - init_mean)
         )
 
-        # Compute the determinant of the covariance matrices.
-
         # Create data for the next model-fitting iteration.
         new_data = np.random.multivariate_normal(
             mean=fit_mean,

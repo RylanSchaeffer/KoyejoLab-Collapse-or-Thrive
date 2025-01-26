@@ -1,3 +1,14 @@
+DEFAULT_DISCRETE_DISTRIBUTION_FITTING_CONFIG = {
+    "data_config": {
+        "init_sampling_distribution": "uniform",
+    },
+    "num_outcomes": 6,
+    "num_samples_per_iteration": 1000,
+    "seed": 0,
+    # "setting": "Accumulate",
+    "setting": "Replace",
+}
+
 DEFAULT_KERNEL_DENSITY_FITTING_CONFIG = {
     "data_config": {
         "dataset_name": "blobs",

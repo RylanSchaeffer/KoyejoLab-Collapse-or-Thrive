@@ -62,7 +62,7 @@ def sample_dataset_from_model():
         wandb_config["model_name_or_path"],
         dtype="bfloat16",
         enforce_eager=True,  # I don't trust Google models in FA2 and SDPA doesn't work with Gemma.
-        swap_space=16,  # Increase RAM from default 4GB to 16GB.
+        swap_space=32,  # Increase RAM from default 4GB to 16GB.
     )
     print("Loaded policy model.")
 

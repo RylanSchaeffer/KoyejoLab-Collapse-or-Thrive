@@ -56,6 +56,28 @@ def determine_setting_from_datasets_str(datasets_str: str) -> str:
     return setting
 
 
+# def download_discrete_distribution_fitting_run_histories(
+#         wandb_project_path: str,
+#         data_dir: str,
+#         sweep_ids: List[str] = None,
+#         wandb_run_history_samples: int = 10000,
+#         refresh: bool = False,
+#         wandb_username: Optional[str] = None,
+#         filetype: str = "csv",
+#         nrows_to_read: Optional[int] = None,
+#         max_workers: int = 10,
+# ):
+#
+#     if refresh or not os.path.isfile(runs_histories_df_path):
+#         run_histories_df: pd.DataFrame = src.analyze.download_wandb_project_runs_histories(
+#             wandb_project_path="rerevisiting-model-collapse-fit-discrete-distributions",
+#             data_dir=data_dir,
+#             sweep_ids=sweep_ids,
+#             refresh=refresh,
+#             wandb_username=wandb.api.default_entity,
+#         )
+
+
 def download_wandb_project_runs_configs(
     wandb_project_path: str,
     data_dir: str,
@@ -392,6 +414,56 @@ def extract_key_value_from_df_col(
         )
     )
     return df
+
+
+def replicate_final_rows_up_to_group_max(
+    df: pd.DataFrame,
+    group_cols=("Num. Samples per Iteration", "Num. Outcomes"),
+    iteration_col="Model-Fitting Iteration",
+    run_id_col="run_id",
+) -> pd.DataFrame:
+    """
+    For each group of (Num. Samples, Num. Outcomes), find the maximum iteration
+    across all runs in that group. Then for each run, replicate its final row
+    up to that group's maximum iteration.
+
+    This ensures that once a run stops logging (e.g. because entropy=0),
+    we get constant trailing rows so that Seaborn lineplots do not abruptly end.
+    """
+    final_dfs = []
+
+    # Group your DataFrame by (samples, outcomes), or however you define a "group"
+    grouped = df.groupby(list(group_cols), as_index=False)
+
+    for group_key, group_df in grouped:
+        # The overall max iteration for this group
+        group_max_iter = group_df[iteration_col].max()
+
+        # Now group by run_id to replicate that run's final row
+        for run_id, run_df in group_df.groupby(run_id_col):
+            run_max_iter = run_df[iteration_col].max()
+
+            # Extract the final row (largest iteration for that run)
+            idxmax = run_df[iteration_col].idxmax()
+            last_row = run_df.loc[idxmax].copy()
+
+            # Build new rows from run_max_iter+1 to group_max_iter
+            new_rows = []
+            for it in range(run_max_iter + 1, group_max_iter + 1):
+                row_copy = last_row.copy()
+                row_copy[iteration_col] = it
+                new_rows.append(row_copy)
+
+            if new_rows:
+                # Append the newly created rows
+                run_df = pd.concat([run_df, pd.DataFrame(new_rows)], ignore_index=True)
+
+            final_dfs.append(run_df)
+
+    # Combine everything back
+    stretched_df = pd.concat(final_dfs, ignore_index=True)
+
+    return stretched_df
 
 
 def setup_notebook_dir(
