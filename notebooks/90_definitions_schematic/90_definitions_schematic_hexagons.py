@@ -80,7 +80,10 @@ def draw_hex_heatmap(
 
     if ylabels is not None:
         ax.set_yticks(np.arange(rows) + 0.5)
-        ax.set_yticklabels(ylabels)
+        if flip_rows:
+            ax.set_yticklabels(ylabels[::-1])
+        else:
+            ax.set_yticklabels(ylabels)
     else:
         ax.set_yticks([])
 
@@ -103,12 +106,12 @@ definitions_df = definitions_df.drop(columns=["Paper Name"])
 definition_columns = [
     "Catastrophic Increase of Population Risk",
     "Any Increase of Population Risk",
-    "Asymptotically Diverging Risk",
+    "Asymptotically Diverging Population Risk",
     "Change in Scaling Law",
     "Collapsing Variance",
-    "Entanglement of Real Data Mode(s) over Time",
-    "Disappearance of Real Tail Data over Time",
-    "Appearance of Hallucinated Data Over Time",
+    "Entanglement of Real Data Mode(s)",
+    "Disappearance of Real Tail Data",
+    "Appearance of Hallucinated Data",
 ]
 
 plt.close()
@@ -132,14 +135,33 @@ fig, (ax0, ax1) = plt.subplots(
 # UPPER HEX-HEATMAP (Explicit Definition)
 ##############################################################################
 upper_data = pd.DataFrame(
-    [definitions_df["Explicit Definition"].values],
+    [definitions_df["Explicit Definition?"].values],
     columns=definitions_df["Author_Date"],
 )
-upper_data.index = ["Explicit Definition"]
+upper_data.index = ["Explicit Definition?"]
+
 
 # 0 => grey, 1 => blue
-upper_numeric_df = (upper_data == "Yes").astype(int)
-upper_annot_df = upper_data.applymap(lambda x: "Yes" if x == "Yes" else "")
+def convert_str_to_int(s) -> int:
+    if s == "Yes":
+        return 2
+    elif s == "No":
+        return 1
+    else:
+        return 0
+
+
+def convert_int_to_str(i) -> str:
+    if i == 2:
+        return "Y"
+    elif i == 1:
+        return "N"
+    else:
+        return "N/A"
+
+
+upper_numeric_df = upper_data.applymap(convert_str_to_int)
+upper_annot_df = upper_numeric_df.applymap(convert_int_to_str)
 
 upper_numeric_np = upper_numeric_df.values
 upper_annot_np = upper_annot_df.values
@@ -148,7 +170,8 @@ draw_hex_heatmap(
     ax=ax0,
     data=upper_numeric_np,
     # color_list=["#f0f0f0", "#4169e1"],  # Grey, Blue
-    color_list=["#f0f0f0", "#33a532"],  # Grey, Green
+    # color_list=["#f0f0f0", "#33a532"],  # Grey, Green
+    color_list=["#f0f0f0", "#e67c82", "#9aeb8a"],  # Grey, Red, Green
     annotations=upper_annot_np,
     xlabels=None,  # NO x tick labels at the top
     ylabels=upper_numeric_df.index,
@@ -193,13 +216,24 @@ lower_annot_np = lower_annot_df.values
 draw_hex_heatmap(
     ax=ax1,
     data=lower_numeric_np,
-    color_list=["#f0f0f0", "#ffd700", "#4169e1"],
+    color_list=["#f0f0f0", "#ffd700", "#c0e9ff"],  # Grey, Yellow, Blue
     annotations=lower_annot_np,
     xlabels=lower_numeric_df.columns,  # We DO want xlabels here
     ylabels=lower_numeric_df.index,
     xrotation=45,
+    flip_rows=True,
 )
 ax1.set_title("Which Definitions of Model Collapse Are Used?")
+ax1.set_ylabel("Definitions of Model Collapse")
+# # Add text
+# fig.text(
+#     0.075,
+#     0.81,
+#     r"\underline{Definitions of Model Collapse}",
+#     # ha="center",
+#     # va="center",
+#     color="black",
+# )
 
 # # Optionally reduce extra whitespace around the figure
 # plt.subplots_adjust(left=0.2, right=0.95, top=0.92, bottom=0.1)
