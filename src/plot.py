@@ -25,9 +25,12 @@ plt.rcParams["text.latex.preamble"] = "\n".join([r"\usepackage{amsmath}"])
 plt.rcParams["font.size"] = 23
 
 
-def save_plot_with_multiple_extensions(plot_dir: str, plot_filename: str):
-    # Ensure that axis labels don't overlap.
-    plt.gcf().tight_layout()
+def save_plot_with_multiple_extensions(
+    plot_dir: str, plot_filename: str, use_tight_layout: bool = True
+):
+    if use_tight_layout:
+        # Ensure that axis labels don't overlap.
+        plt.gcf().tight_layout()
 
     extensions = [
         "pdf",

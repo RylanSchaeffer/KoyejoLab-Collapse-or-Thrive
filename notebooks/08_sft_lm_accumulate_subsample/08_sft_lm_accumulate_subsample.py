@@ -142,3 +142,5 @@ src.plot.save_plot_with_multiple_extensions(
     plot_filename="y=eval_loss_x=model_fitting_iteration_col=setting",
 )
 # plt.show()
+
+print("Finished notebooks/13_discrete_distribution_fitting!")
