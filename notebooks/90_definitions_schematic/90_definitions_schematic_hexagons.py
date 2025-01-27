@@ -147,7 +147,8 @@ upper_annot_np = upper_annot_df.values
 draw_hex_heatmap(
     ax=ax0,
     data=upper_numeric_np,
-    color_list=["#f0f0f0", "#4169e1"],
+    # color_list=["#f0f0f0", "#4169e1"],  # Grey, Blue
+    color_list=["#f0f0f0", "#33a532"],  # Grey, Green
     annotations=upper_annot_np,
     xlabels=None,  # NO x tick labels at the top
     ylabels=upper_numeric_df.index,
@@ -198,7 +199,7 @@ draw_hex_heatmap(
     ylabels=lower_numeric_df.index,
     xrotation=45,
 )
-ax1.set_title("What Definitions of Model Collapse Are Used?")
+ax1.set_title("Which Definitions of Model Collapse Are Used?")
 
 # # Optionally reduce extra whitespace around the figure
 # plt.subplots_adjust(left=0.2, right=0.95, top=0.92, bottom=0.1)

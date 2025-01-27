@@ -69,7 +69,8 @@ upper_numeric_df = (upper_data == "Yes").astype(int)
 upper_annot_df = upper_data.applymap(lambda x: "Yes" if x == "Yes" else "")
 upper_heatmap = sns.heatmap(
     upper_numeric_df,
-    cmap=["#f0f0f0", "#4169e1"],
+    # cmap=["#f0f0f0", "#4169e1"],  # Grey, Blue
+    cmap=["#f0f0f0", "#33a532"],  # Grey, Green
     cbar=False,
     # cbar_kws={"label": ""},
     # cbar_ax=axes[0, 1],
@@ -134,7 +135,7 @@ lower_heatmap = sns.heatmap(
 ax1.tick_params(axis="y", rotation=0)
 ax1.set_xticklabels(ax1.get_xticklabels(), rotation=45, ha="right")
 ax1.set_xlabel("")
-ax1.set_title(r"What Definitions of Model Collapse Are Used?")
+ax1.set_title(r"Which Definitions of Model Collapse Are Used?")
 
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
