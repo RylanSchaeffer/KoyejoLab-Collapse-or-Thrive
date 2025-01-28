@@ -145,4 +145,4 @@ src.plot.save_plot_with_multiple_extensions(
 )
 plt.show()
 
-print("Finished notebooks/90_definitions_schematic0")
+print("Finished notebooks/90_definitions_schematic")
