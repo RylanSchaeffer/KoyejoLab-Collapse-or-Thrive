@@ -117,12 +117,39 @@ g.set(
     ylim=(0.0, 1.0),
     ylabel="Fraction of Initial Distribution's Entropy",
 )
-# sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
 src.plot.save_plot_with_multiple_extensions(
     plot_dir=results_dir,
     plot_filename="y=fraction_of_initial_entropy_x=model_fitting_iteration_hue=num_samples_per_iteration_style=num_outcomes",
 )
 plt.show()
 
+
+# Plot the entropy over model-fitting iterations.
+plt.close()
+g = sns.relplot(
+    data=run_histories_df,
+    kind="line",
+    x="Model-Fitting Iteration",
+    y="Fraction of Initial Entropy",
+    hue="Num. Samples per Iteration",
+    hue_norm=matplotlib.colors.LogNorm(),
+    col="Num. Outcomes",
+    # style="Num. Outcomes",
+    palette="cool",
+)
+g.set(
+    xscale="symlog",
+    xlim=(0, None),
+    ylim=(0.0, 1.0),
+    ylabel="Fraction of Initial Distribution's Entropy",
+)
+g.set_titles(col_template="{col_name} Outcomes")
+sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+src.plot.save_plot_with_multiple_extensions(
+    plot_dir=results_dir,
+    plot_filename="y=fraction_of_initial_entropy_x=model_fitting_iteration_hue=num_samples_per_iteration_col=num_outcomes",
+)
+plt.show()
 
 print("Finished notebooks/13_discrete_distribution_fitting!")

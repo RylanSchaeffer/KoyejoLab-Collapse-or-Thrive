@@ -23,9 +23,12 @@ def draw_hex_heatmap(
     xrotation=90,
 ):
     """
-    Draw a hex 'heatmap' on Axes `ax` from a 2D integer `data` array:
+    Draw a hex/triangle 'heatmap' on Axes `ax` from a 2D integer `data` array:
       - data[i,j] indexes into color_list
-      - annotations[i,j] is an optional string to plot at the cell center
+      - annotations[i,j] determines the shape:
+        - "Y" => upward-pointing triangle
+        - "N" => downward-pointing triangle
+        - other values => hexagon
       - flip_rows=True => row 0 at the top, typical 'heatmap' style
       - xlabels/ylabels => if not None, show ticklabels
       - xrotation => rotation (degrees) for x-tick labels
@@ -42,17 +45,47 @@ def draw_hex_heatmap(
             # Flip row indices so row 0 is at the top
             y_coord = (rows - 1 - i) if flip_rows else i
             x_coord = j
-            # Draw a hex
-            hex_patch = mpatches.RegularPolygon(
-                (x_coord + 0.5, y_coord + 0.5),
-                numVertices=6,
-                radius=0.45,
-                orientation=np.radians(30),
-                edgecolor="white",
-                facecolor=color,
-            )
-            ax.add_patch(hex_patch)
-            # Annotation
+
+            # Determine shape based on annotation
+            shape = None
+            if annotations is not None and annotations[i, j] in ["Y", "N"]:
+                # For triangles, use a 3-vertex polygon
+                # Scale radius to roughly match hexagon size
+                triangle_radius = 0.55
+                if annotations[i, j] == "Y":
+                    # Upward triangle (rotated 0 degrees)
+                    shape = mpatches.RegularPolygon(
+                        (x_coord + 0.5, y_coord + 0.50),
+                        numVertices=3,
+                        radius=triangle_radius,
+                        orientation=0,
+                        edgecolor="white",
+                        facecolor=color,
+                    )
+                else:  # "N"
+                    # Downward triangle (rotated 180 degrees)
+                    shape = mpatches.RegularPolygon(
+                        (x_coord + 0.5, y_coord + 0.55),
+                        numVertices=3,
+                        radius=triangle_radius,
+                        orientation=np.pi,
+                        edgecolor="white",
+                        facecolor=color,
+                    )
+            else:
+                # Default hexagon
+                shape = mpatches.RegularPolygon(
+                    (x_coord + 0.5, y_coord + 0.5),
+                    numVertices=6,
+                    radius=0.45,
+                    orientation=np.radians(30),
+                    edgecolor="white",
+                    facecolor=color,
+                )
+
+            ax.add_patch(shape)
+
+            # Annotation (only if it's not "Y" or "N")
             if annotations is not None:
                 ann = annotations[i, j]
                 if isinstance(ann, str) and ann.strip():
@@ -66,7 +99,7 @@ def draw_hex_heatmap(
                         color="black",
                     )
 
-    # Adjust axes so hexes fit neatly
+    # Adjust axes so shapes fit neatly
     ax.set_xlim(0, cols)
     ax.set_ylim(0, rows)
     ax.set_aspect("equal")
